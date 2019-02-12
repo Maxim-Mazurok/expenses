@@ -27,12 +27,22 @@
 .Household {
   background: rgb(0, 183, 224);
 }
+.Tech {
+  background: rgb(44, 60, 224);
+}
 .Shopping {
+  background: rgb(214, 0, 87);
+}
+.Taxi {
   background: rgb(214, 214, 0);
 }
 .Health {
-  background: rgb(252, 169, 5);
+  background: rgb(40, 252, 0);
 }
 .Entertainment {
   background: rgb(86, 0, 191);
+}
+
+.Education {
+  background: rgb(0, 191, 88);
 }

@@ -19,6 +19,12 @@ export default class ExpenseIcon extends Component {
         return "local_hospital";
       case "Entertainment":
         return "local_movies";
+      case "Tech":
+        return "important_devices";
+      case "Taxi":
+        return "local_taxi";
+      case "Education":
+        return "school";
       default:
         return "attach_money";
     }

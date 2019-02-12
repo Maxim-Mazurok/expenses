@@ -1,3 +1,15 @@
+## Fork log:
+- [ ] Added icons and colors for:
+  - [x] Tech
+  - [x] Taxi
+  - [x] Education
+  - [ ] Add ability to set icons and colors from interface/google sheets
+- [ ] Multi-currency support (basic)
+  - [x] If account name does not contain `(usd)` in the name, it's considered to be UAH (₴) in interface
+  - [ ] Additional changes made to my own spreadsheet, will publish later when it'll support more currencies
+- [x] Added `REACT_APP_GOOGLE_CLIENT_ID` environment variable support. Create your own app at [console.cloud.google.com/apis](https://console.cloud.google.com/apis)
+
+
 💰Expenses is a [progressive web application](https://developers.google.com/web/progressive-web-apps/) on top of [Google Sheets](https://developers.google.com/sheets/) 📉 written in [React](https://facebook.github.io/react/) ⚛️. It is only a static HTML that works great on mobile 📱 and can be deployed anywhere.
 
 Check out the [demo](https://demo-expenses.chodounsky.net) but please be considerate and don't break it for others.

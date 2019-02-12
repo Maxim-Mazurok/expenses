@@ -171,7 +171,6 @@ class App extends Component {
       expense.account,
       expense.category,
       expense.amount,
-      `=IF(REGEXMATCH(C7, "(usd)"), E7, E7*GoogleFinance("CURRENCY:UAHUSD"))`,
     ];
   }
 

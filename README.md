@@ -8,6 +8,9 @@
   - [x] If account name does not contain `(usd)` in the name, it's considered to be UAH (₴) in interface
   - [ ] Additional changes made to my own spreadsheet, will publish later when it'll support more currencies
 - [x] Added `REACT_APP_GOOGLE_CLIENT_ID` environment variable support. Create your own app at [console.cloud.google.com/apis](https://console.cloud.google.com/apis)
+- [ ] Track income
+  - [x] Specify negative values in amount field (temporary workaround)
+  - [ ] DO it the right way
 
 ---
 

@@ -100,7 +100,6 @@ class ExpenseForm extends Component {
               onChange={this.handleInputChange}
               type="number"
               step="0.01"
-              min="0"
               required
             />
             <label className="mdc-textfield__label">Amount</label>

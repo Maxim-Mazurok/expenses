@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-export default class ExpenseIcon extends Component {
-  iconFrom(category) {
+export default class OperationIcon extends Component {
+  static iconFrom(category) {
     switch (category) {
       case "Groceries":
         return "local_grocery_store";
@@ -37,7 +37,7 @@ export default class ExpenseIcon extends Component {
         role="presentation"
       >
         <i className="material-icons" aria-hidden="true">
-          {this.iconFrom(this.props.category)}
+          {OperationIcon.iconFrom(this.props.category)}
         </i>
       </span>
     );

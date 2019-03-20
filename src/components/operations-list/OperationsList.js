@@ -1,14 +1,14 @@
 import React, { Component } from "react";
-import ExpenseDetail from "./ExpenseDetail.js"
+import OperationDetails from "./OperationDetails.js"
 import "@material/list/dist/mdc.list.css";
-import "./ExpenseList.css";
+import "./OperationsList.css";
 
-class ExpenseList extends Component {
+class OperationsList extends Component {
   render() {
     return (
       <ul className="mdc-list mdc-list--two-line mdc-list--avatar-list">
         {this.props.expenses.map(expense =>
-          <ExpenseDetail
+          <OperationDetails
             key={expense.id}
             expense={expense}
             onSelect={this.props.onSelect}
@@ -19,4 +19,4 @@ class ExpenseList extends Component {
   }
 }
 
-export default ExpenseList;
+export default OperationsList;

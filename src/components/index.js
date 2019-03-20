@@ -1,9 +1,9 @@
-import ExpenseList from "./expense-list/ExpenseList";
-import ExpenseForm from "./expense-form/ExpenseForm";
+import OperationsList from "./operations-list/OperationsList";
+import OperationForm from "./operation-form/OperationForm";
 import LoadingBar from "./LoadingBar";
 
 export {
-  ExpenseList,
-  ExpenseForm,
+  OperationsList,
+  OperationForm,
   LoadingBar
 };

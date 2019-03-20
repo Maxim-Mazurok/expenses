@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { ExpenseList, ExpenseForm, LoadingBar } from "./components/index";
-import { MDCSnackbar } from "@material/snackbar/dist/mdc.snackbar.js";
+import { LoadingBar, OperationForm, OperationsList } from "./components/index";
+import { MDCSnackbar } from '@material/snackbar';
 
 import "@material/fab/dist/mdc.fab.css";
 import "@material/button/dist/mdc.button.css";
@@ -11,12 +11,12 @@ import "@material/card/dist/mdc.card.css";
 import "./App.css";
 
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.clientId =
-        process.env.REACT_APP_GOOGLE_CLIENT_ID ||
-        "826265862385-p41e559ccssujlfsf49ppmo0gktkf6co.apps.googleusercontent.com";
+      process.env.REACT_APP_GOOGLE_CLIENT_ID ||
+      "826265862385-p41e559ccssujlfsf49ppmo0gktkf6co.apps.googleusercontent.com";
     this.spreadsheetId =
       process.env.REACT_APP_SHEET_ID ||
       "1eYrQf0xhs2mTSWEzQRfSM-MD-tCcx1r0NVEacLg3Jrc";
@@ -62,7 +62,7 @@ class App extends Component {
     if (this.state.signedIn) {
       this.load();
     }
-  }
+  };
 
   handleExpenseSubmit = () => {
     this.setState({ processing: true, showExpenseForm: false });
@@ -71,9 +71,8 @@ class App extends Component {
       : this.append).bind(this);
     submitAction(this.state.expense).then(
       response => {
-        this.snackbar.show({
-          message: `Expense ${this.state.expense.id ? "updated" : "added"}!`
-        });
+        this.snackbar.labelText = `Expense ${this.state.expense.id ? "updated" : "added"}!`;
+        this.snackbar.open();
         this.load();
       },
       response => {
@@ -82,13 +81,13 @@ class App extends Component {
         this.setState({ loading: false });
       }
     );
-  }
+  };
 
   handleExpenseChange = (attribute, value) => {
     this.setState({
       expense: Object.assign({}, this.state.expense, { [attribute]: value })
     });
-  }
+  };
 
   handleExpenseDelete = (expense) => {
     this.setState({ processing: true, showExpenseForm: false });
@@ -113,7 +112,8 @@ class App extends Component {
       })
       .then(
         response => {
-          this.snackbar.show({ message: "Expense deleted!" });
+          this.snackbar.labelText = "Operation deleted!";
+          this.snackbar.open();
           this.load();
         },
         response => {
@@ -122,15 +122,15 @@ class App extends Component {
           this.setState({ loading: false });
         }
       );
-  }
+  };
 
   handleExpenseSelect = (expense) => {
     this.setState({ expense: expense, showExpenseForm: true });
-  }
+  };
 
   handleExpenseCancel = () => {
     this.setState({ showExpenseForm: false });
-  }
+  };
 
   onExpenseNew() {
     const now = new Date();
@@ -239,46 +239,46 @@ class App extends Component {
               role="toolbar"
             >
               {this.state.signedIn === false &&
-                <a
-                  className="material-icons mdc-toolbar__icon"
-                  aria-label="Sign in"
-                  alt="Sign in"
-                  onClick={e => {
-                    e.preventDefault();
-                    window.gapi.auth2.getAuthInstance().signIn();
-                  }}
-                >
-                  perm_identity
-                </a>}
+              <a
+                className="material-icons mdc-toolbar__icon"
+                aria-label="Sign in"
+                alt="Sign in"
+                onClick={e => {
+                  e.preventDefault();
+                  window.gapi.auth2.getAuthInstance().signIn();
+                }}
+              >
+                perm_identity
+              </a>}
               {this.state.signedIn &&
-                <a
-                  className="material-icons mdc-toolbar__icon"
-                  aria-label="Sign out"
-                  alt="Sign out"
-                  onClick={e => {
-                    e.preventDefault();
-                    window.gapi.auth2.getAuthInstance().signOut();
-                  }}
-                >
-                  exit_to_app
-                </a>}
+              <a
+                className="material-icons mdc-toolbar__icon"
+                aria-label="Sign out"
+                alt="Sign out"
+                onClick={e => {
+                  e.preventDefault();
+                  window.gapi.auth2.getAuthInstance().signOut();
+                }}
+              >
+                exit_to_app
+              </a>}
             </section>
           </div>
         </header>
         <div className="toolbar-adjusted-content">
           {this.state.signedIn === undefined && <LoadingBar />}
           {this.state.signedIn === false &&
-            <div className="center">
-              <button
-                className="mdc-button sign-in"
-                aria-label="Sign in"
-                onClick={() => {
-                  window.gapi.auth2.getAuthInstance().signIn();
-                }}
-              >
-                Sign In
-              </button>
-            </div>}
+          <div className="center">
+            <button
+              className="mdc-button sign-in"
+              aria-label="Sign in"
+              onClick={() => {
+                window.gapi.auth2.getAuthInstance().signIn();
+              }}
+            >
+              Sign In
+            </button>
+          </div>}
           {this.state.signedIn && this.renderBody()}
         </div>
         <div
@@ -288,17 +288,20 @@ class App extends Component {
             }
           }}
           className="mdc-snackbar"
-          aria-live="assertive"
-          aria-atomic="true"
-          aria-hidden="true"
         >
-          <div className="mdc-snackbar__text" />
-          <div className="mdc-snackbar__action-wrapper">
-            <button
-              type="button"
-              className="mdc-button mdc-snackbar__action-button"
-              aria-hidden="true"
+          <div className="mdc-snackbar__surface">
+            <div
+              className="mdc-snackbar__label"
+              role="status"
+              aria-live="polite"
             />
+            <div className="mdc-snackbar__actions">
+              <button
+                type="button"
+                className="mdc-button mdc-snackbar__action"
+                aria-hidden="true"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -318,7 +321,7 @@ class App extends Component {
   renderExpenses() {
     if (this.state.showExpenseForm)
       return (
-        <ExpenseForm
+        <OperationForm
           categories={this.state.categories}
           accounts={this.state.accounts}
           expense={this.state.expense}
@@ -342,7 +345,7 @@ class App extends Component {
               Previous month: {this.state.previousMonth}
             </section>
           </div>
-          <ExpenseList
+          <OperationsList
             expenses={this.state.expenses}
             onSelect={this.handleExpenseSelect}
           />

@@ -1,4 +1,4 @@
-## Maxim Mazurok Fork log:
+## Maxim Mazurok Fork log / todo list:
 - [ ] Added icons and colors for:
   - [x] Tech
   - [x] Taxi
@@ -11,6 +11,18 @@
 - [ ] Track income
   - [x] Specify negative values in amount field (temporary workaround)
   - [ ] DO it the right way
+- [ ] Update all deps
+  - [ ] Update material-components-web to 1.0.1 version (in progress)
+    - [x] Migrated snakbar, dialog, text-field, etc
+    - [ ] Fixed main list styling and others
+  - [ ] Update material-icons
+  - [ ] Update react, react-dom and react-scripts
+  - [ ] Get rid of 63 low severity vulnerabilities
+- [ ] Add tests
+  - [ ] Unit tests
+  - [ ] Integration tests
+- [ ] Migrate to TS
+  - [ ] Add code style linter
 
 ---
 

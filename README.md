@@ -23,6 +23,7 @@
   - [ ] Integration tests
 - [ ] Migrate to TS
   - [ ] Add code style linter
+- [ ] Fix standalone login on iOS by using [pwacompat](https://github.com/GoogleChromeLabs/pwacompat)
 
 ---
 

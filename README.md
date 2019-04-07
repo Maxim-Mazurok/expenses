@@ -18,7 +18,9 @@
   - [ ] Update material-icons
   - [ ] Update react, react-dom and react-scripts
   - [ ] Get rid of 63 low severity vulnerabilities
-- [ ] Add tests
+- [ ] Tests
+  - [ ] Fix existing tests (`Cannot read property 'load' of undefined` in 
+  `window.gapi.load(...`) 
   - [ ] Unit tests
   - [ ] Integration tests
 - [ ] Migrate to TS

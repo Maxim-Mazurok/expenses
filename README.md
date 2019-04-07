@@ -11,6 +11,8 @@
 - [ ] Track income
   - [x] Specify negative values in amount field (temporary workaround)
   - [ ] DO it the right way
+- [ ] Track bank fees (as an optional field for transaction)
+- [ ] Track transfers (in a one special? transaction)
 - [ ] Update all deps
   - [ ] Update material-components-web to 1.0.1 version (in progress)
     - [x] Migrated snakbar, dialog, text-field, etc

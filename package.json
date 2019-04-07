@@ -12,7 +12,7 @@
     "@material/textfield": "^1.1.0",
     "@types/gapi": "0.0.36",
     "material-components-web": "^1.1.0",
-    "material-icons": "^0.1.0",
+    "material-icons": "^0.3.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4"
   },

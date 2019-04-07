@@ -5,9 +5,12 @@
   - [x] Education
   - [ ] Add ability to set icons and colors from interface/google sheets
 - [ ] Multi-currency support (basic)
-  - [x] If account name does not contain `(usd)` in the name, it's considered to be UAH (₴) in interface
-  - [ ] Additional changes made to my own spreadsheet, will publish later when it'll support more currencies
-- [x] Added `REACT_APP_GOOGLE_CLIENT_ID` environment variable support. Create your own app at [console.cloud.google.com/apis](https://console.cloud.google.com/apis)
+  - [x] If account name does not contain `(usd)` in the name, it's considered 
+  to be UAH (₴) in interface
+  - [ ] Additional changes made to my own spreadsheet, will publish later when 
+  it'll support more currencies
+- [x] Added `REACT_APP_GOOGLE_CLIENT_ID` environment variable support. Create 
+your own app at [console.cloud.google.com/apis](https://console.cloud.google.com/apis)
 - [ ] Track income
   - [x] Specify negative values in amount field (temporary workaround)
   - [ ] DO it the right way
@@ -17,7 +20,7 @@
   - [ ] Update material-components-web to 1.0.1 version (in progress)
     - [x] Migrated snakbar, dialog, text-field, etc
     - [ ] Fixed main list styling and others
-  - [ ] Update material-icons
+  - [x] Update material-icons
   - [ ] Update react, react-dom and react-scripts
   - [ ] Get rid of 63 low severity vulnerabilities
 - [ ] Tests
@@ -27,10 +30,12 @@
   - [ ] Integration tests
 - [ ] Migrate to TS
   - [ ] Add code style linter
-- [ ] Fix standalone login on iOS by using [pwacompat](https://github.com/GoogleChromeLabs/pwacompat)
+- [ ] Fix standalone login on iOS by using 
+[pwacompat](https://github.com/GoogleChromeLabs/pwacompat)
 - [ ] DB options
   - [ ] Use (non)-relational DBs for storage
 - [ ] Provide as a full SAAS solution
+- [ ] Add true full offline support
 
 ---
 

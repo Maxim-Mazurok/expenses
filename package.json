@@ -10,15 +10,15 @@
     "@material/dialog": "^1.1.0",
     "@material/snackbar": "^1.1.0",
     "@material/textfield": "^1.1.0",
-    "@types/gapi": "0.0.36",
+    "@types/gapi": "^0.0.36",
     "material-components-web": "^1.1.0",
     "material-icons": "^0.3.1",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   },
   "devDependencies": {
     "local-web-server": "^2.6.1",
-    "react-scripts": "^2.1.5"
+    "react-scripts": "^3.0.0-next.b0cbf2ca"
   },
   "scripts": {
     "start": "react-scripts start",

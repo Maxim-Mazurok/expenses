@@ -21,7 +21,7 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
     - [x] Migrated snakbar, dialog, text-field, etc
     - [ ] Fixed main list styling and others
   - [x] Update material-icons
-  - [ ] Update react, react-dom and react-scripts
+  - [x] Update react, react-dom and react-scripts
   - [ ] Get rid of 63 low severity vulnerabilities
 - [ ] Tests
   - [ ] Fix existing tests (`Cannot read property 'load' of undefined` in 
@@ -36,6 +36,7 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
   - [ ] Use (non)-relational DBs for storage
 - [ ] Provide as a full SAAS solution
 - [ ] Add true full offline support
+- [ ] `nodemon` for `npm run build`
 
 ---
 

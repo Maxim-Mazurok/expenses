@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { MDCTextField } from "@material/textfield/dist/mdc.textfield.js";
-import { MDCDialog } from "@material/dialog/dist/mdc.dialog.js";
+import { MDCTextField } from "@material/textfield";
+import { MDCDialog } from "@material/dialog";
 
 import "@material/form-field/dist/mdc.form-field.css";
 import "@material/select/dist/mdc.select.css";

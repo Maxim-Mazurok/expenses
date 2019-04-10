@@ -1,16 +1,30 @@
 import React, { Component } from "react";
-import { LoadingBar, OperationForm, OperationsList } from "./components/index";
-import { MDCSnackbar } from '@material/snackbar';
+import { LoadingBar, OperationForm, OperationsList } from "./components";
 
-import "@material/fab/dist/mdc.fab.css";
-import "@material/button/dist/mdc.button.css";
-import "@material/toolbar/dist/mdc.toolbar.css";
-import "@material/snackbar/dist/mdc.snackbar.css";
-import "@material/card/dist/mdc.card.css";
+import '@material/react-top-app-bar/dist/top-app-bar.css';
+import '@material/react-material-icon/dist/material-icon.css';
+import "@material/react-drawer/dist/drawer.css";
 
+import MaterialIcon from "@material/react-material-icon";
+import List, { ListItem, ListItemText, ListItemGraphic } from '@material/react-list';
 import "./App.css";
+import TopAppBar, {
+  TopAppBarFixedAdjust,
+  TopAppBarIcon,
+  TopAppBarRow,
+  TopAppBarSection,
+  TopAppBarTitle,
+} from '@material/react-top-app-bar';
+import { Snackbar } from "@material/react-snackbar";
+import Drawer, {
+  DrawerHeader,
+  DrawerSubtitle,
+  DrawerTitle,
+  DrawerContent,
+} from '@material/react-drawer';
 
 class App extends Component {
+
   constructor(props) {
     super(props);
 
@@ -30,7 +44,11 @@ class App extends Component {
       expense: {},
       currentMonth: undefined,
       previousMonth: undefined,
-      showExpenseForm: false
+      showExpenseForm: false,
+      snackbarMessage: '',
+      snackbarOpen: false,
+      drawerOpen: false,
+      selectedMenu: 0,
     };
 
   }
@@ -71,8 +89,10 @@ class App extends Component {
       : this.append).bind(this);
     submitAction(this.state.expense).then(
       response => {
-        this.snackbar.labelText = `Expense ${this.state.expense.id ? "updated" : "added"}!`;
-        this.snackbar.open();
+        this.setState({
+          snackbarMessage: `Expense ${this.state.expense.id ? "updated" : "added"}!`,
+          snackbarOpen: true,
+        });
         this.load();
       },
       response => {
@@ -226,84 +246,88 @@ class App extends Component {
       });
   }
 
+  openDrawer() {
+    this.setState({ drawerOpen: true })
+  }
+
+  closeDrawer() {
+    this.setState({ drawerOpen: false })
+  }
+
   render() {
     return (
       <div>
-        <header className="mdc-toolbar mdc-toolbar--fixed">
-          <div className="mdc-toolbar__row">
-            <section className="mdc-toolbar__section mdc-toolbar__section--align-start">
-              <span className="mdc-toolbar__title">Expenses</span>
-            </section>
-            <section
-              className="mdc-toolbar__section mdc-toolbar__section--align-end"
-              role="toolbar"
+        <TopAppBar
+          short={true}
+        >
+          <TopAppBarRow>
+            <TopAppBarSection align="start">
+              <TopAppBarIcon navIcon tabIndex={0}>
+                <MaterialIcon hasRipple icon="menu" onClick={() => {
+                  this.openDrawer()
+                }} />
+              </TopAppBarIcon>
+              <TopAppBarTitle>Transactions</TopAppBarTitle>
+            </TopAppBarSection>
+          </TopAppBarRow>
+        </TopAppBar>
+        <Drawer
+          modal
+          open={this.state.drawerOpen}
+          onClose={() => {
+            this.closeDrawer()
+          }}
+        >
+          <DrawerHeader> {/*defaults to div*/}
+            <DrawerTitle tag="h2"> {/*defaults to h3*/}
+              Inbox
+            </DrawerTitle>
+            <DrawerSubtitle> {/*defaults to h6*/}
+              matt@email.com
+            </DrawerSubtitle>
+          </DrawerHeader>
+
+          <DrawerContent>
+            <List
+              singleSelection
+              selectedIndex={this.state.selectedMenu}
             >
-              {this.state.signedIn === false &&
-              <a
-                className="material-icons mdc-toolbar__icon"
-                aria-label="Sign in"
-                alt="Sign in"
-                onClick={e => {
-                  e.preventDefault();
-                  window.gapi.auth2.getAuthInstance().signIn();
-                }}
-              >
-                perm_identity
-              </a>}
-              {this.state.signedIn &&
-              <a
-                className="material-icons mdc-toolbar__icon"
-                aria-label="Sign out"
-                alt="Sign out"
-                onClick={e => {
-                  e.preventDefault();
-                  window.gapi.auth2.getAuthInstance().signOut();
-                }}
-              >
-                exit_to_app
-              </a>}
-            </section>
-          </div>
-        </header>
-        <div className="toolbar-adjusted-content">
+              <ListItem>
+                <ListItemGraphic graphic={<MaterialIcon icon="dashboard" />} />
+                <ListItemText primaryText="Dashboard" />
+              </ListItem>
+              <ListItem>
+                <ListItemGraphic graphic={<MaterialIcon icon="pie_chart" />} />
+                <ListItemText primaryText="Charts" />
+              </ListItem>
+              <ListItem>
+                <ListItemGraphic graphic={<MaterialIcon icon="settings" />} />
+                <ListItemText primaryText="Settings" />
+              </ListItem>
+            </List>
+          </DrawerContent>
+        </Drawer>
+        <TopAppBarFixedAdjust>
           {this.state.signedIn === undefined && <LoadingBar />}
           {this.state.signedIn === false &&
           <div className="center">
             <button
-              className="mdc-button sign-in"
+              className="mdc-button mdc-button--raised"
               aria-label="Sign in"
               onClick={() => {
                 window.gapi.auth2.getAuthInstance().signIn();
               }}
             >
-              Sign In
+              <span className="mdc-button__label">Sign in</span>
             </button>
           </div>}
           {this.state.signedIn && this.renderBody()}
-        </div>
-        <div
-          ref={el => {
-            if (el) {
-              this.snackbar = new MDCSnackbar(el);
-            }
-          }}
-          className="mdc-snackbar"
-        >
-          <div className="mdc-snackbar__surface">
-            <div
-              className="mdc-snackbar__label"
-              role="status"
-              aria-live="polite"
-            />
-            <div className="mdc-snackbar__actions">
-              <button
-                type="button"
-                className="mdc-button mdc-snackbar__action"
-                aria-hidden="true"
-              />
-            </div>
-          </div>
-        </div>
+
+        </TopAppBarFixedAdjust>
+
+        <Snackbar
+          message={this.state.snackbarMessage}
+        />
       </div>
     );
   }

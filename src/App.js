@@ -1,29 +1,12 @@
 import React, { Component } from "react";
-import { LoadingBar, OperationForm, OperationsList } from "./components";
 
-import MaterialIcon from "@material/react-material-icon";
-import List, { ListItem, ListItemText, ListItemGraphic, ListDivider } from '@material/react-list';
-import "./App.scss";
-import TopAppBar, {
-  TopAppBarFixedAdjust,
-  TopAppBarIcon,
-  TopAppBarRow,
-  TopAppBarSection,
-  TopAppBarTitle,
-} from '@material/react-top-app-bar';
 import { Snackbar } from "@material/react-snackbar";
-import Drawer, {
-  DrawerHeader,
-  DrawerSubtitle,
-  DrawerTitle,
-  DrawerContent,
-} from '@material/react-drawer';
-import Button from '@material/react-button';
-import { Cell, Grid, Row } from '@material/react-layout-grid';
-import { BrowserRouter, Route, Link } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
+
 import Settings from "./components/settings/settings";
 import Dashboard from "./components/dashboard/dashboard";
-import { Provider } from 'react-redux'
+
+import "./App.scss";
 
 class App extends Component {
 
@@ -56,7 +39,7 @@ class App extends Component {
       ? this.update
       : this.append).bind(this);
     submitAction(this.state.expense).then(
-      response => {
+      () => {
         this.setState({
           snackbarMessage: `Expense ${this.state.expense.id ? "updated" : "added"}!`,
           snackbarOpen: true,
@@ -99,7 +82,7 @@ class App extends Component {
         }
       })
       .then(
-        response => {
+        () => {
           this.snackbar.labelText = "Operation deleted!";
           this.snackbar.open();
           this.load();
@@ -138,7 +121,7 @@ class App extends Component {
     });
   }
 
-  formatExpense(expense) {
+  static formatExpense(expense) {
     return [
       `=DATE(${expense.date.substr(0, 4)}, ${expense.date.substr(
         5,
@@ -157,7 +140,7 @@ class App extends Component {
       range: "Expenses!A1",
       valueInputOption: "USER_ENTERED",
       insertDataOption: "INSERT_ROWS",
-      values: [this.formatExpense(expense)]
+      values: [App.formatExpense(expense)]
     });
   }
 
@@ -166,7 +149,7 @@ class App extends Component {
       spreadsheetId: this.spreadsheetId,
       range: expense.id,
       valueInputOption: "USER_ENTERED",
-      values: [this.formatExpense(expense)]
+      values: [App.formatExpense(expense)]
     });
   }
 
@@ -176,11 +159,11 @@ class App extends Component {
         <Route
           path="/"
           exact
-          render={(props) => <Dashboard {...props} state={this.state}/>}
+          render={(props) => <Dashboard {...props} state={this.state} />}
         />
         <Route
           path="/settings"
-          render={(props) => <Settings {...props} state={this.state}/>}
+          render={(props) => <Settings {...props} state={this.state} />}
         />
 
         <Snackbar

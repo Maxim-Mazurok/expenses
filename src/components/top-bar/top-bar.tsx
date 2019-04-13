@@ -17,10 +17,6 @@ type Props = {
 type State = {}
 
 export default class TopBar extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
-
   private openDrawer = () => {
     if (typeof this.props.openDrawer === 'function') {
       this.props.openDrawer();

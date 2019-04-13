@@ -9,14 +9,15 @@ import TopAppBar, {
 } from "@material/react-top-app-bar";
 import '@material/react-top-app-bar/dist/top-app-bar.css';
 
-type Props = {
+type TopBarProps = {
   title?: string,
-  openDrawer: () => void
+  openDrawer: () => void,
+  short?: boolean
 }
 
-type State = {}
+type TopBarState = {}
 
-export default class TopBar extends Component<Props, State> {
+export default class TopBar extends Component<TopBarProps, TopBarState> {
   private openDrawer = () => {
     if (typeof this.props.openDrawer === 'function') {
       this.props.openDrawer();
@@ -25,10 +26,10 @@ export default class TopBar extends Component<Props, State> {
     }
   };
 
-  render(): React.ReactElement<Props, React.JSXElementConstructor<State>> {
+  render(): React.ReactElement<TopBarProps, React.JSXElementConstructor<TopBarState>> {
     // noinspection HtmlDeprecatedAttribute
     return <TopAppBar
-      short={true}
+      short={this.props.short || true}
     >
       <TopAppBarRow>
         <TopAppBarSection

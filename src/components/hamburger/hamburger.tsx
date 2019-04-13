@@ -9,16 +9,16 @@ import "@material/react-drawer/dist/drawer.css";
 import List, { ListItem, ListItemGraphic, ListItemText } from "@material/react-list";
 import '@material/react-list/dist/list.css';
 
-type Props = {
+type HamburgerProps = {
   drawerOpen?: boolean
   closeDrawer: () => void
   navigateTo: (url: string) => void
-  profile?: gapi.auth2.BasicProfile
+  profile?: gapi.auth2.BasicProfile | null
   selectedMenuIndex?: number
   menu: Menu
 }
 
-type State = {}
+type HamburgerState = {}
 
 type MenuItem = {
   url: string,
@@ -26,9 +26,9 @@ type MenuItem = {
   text: string
 }
 
-type Menu = MenuItem[]
+export type Menu = MenuItem[]
 
-export default class Hamburger extends Component<Props, State> {
+export default class Hamburger extends Component<HamburgerProps, HamburgerState> {
   private closeDrawer = () => {
     if (typeof this.props.closeDrawer === 'function') {
       this.props.closeDrawer();
@@ -45,9 +45,11 @@ export default class Hamburger extends Component<Props, State> {
     }
   };
 
-  render(): React.ReactElement<Props, React.JSXElementConstructor<State>> {
+  render(): React.ReactElement<HamburgerProps, React.JSXElementConstructor<HamburgerState>> {
     const menu = this.props.menu.map((menuItem: MenuItem) =>
-      <ListItem>
+      <ListItem
+        key={menuItem.text}
+      >
         <ListItemGraphic graphic={<MaterialIcon icon={menuItem.icon} />} />
         <ListItemText primaryText={menuItem.text} />
       </ListItem>

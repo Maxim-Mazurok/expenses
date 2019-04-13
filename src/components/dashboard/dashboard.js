@@ -15,9 +15,6 @@ import '@material/react-fab/dist/fab.css';
 
 import { withRouter } from "react-router-dom";
 
-import TopBar from "../top-bar/top-bar";
-import Hamburger from "../hamburger/hamburger";
-
 class Dashboard extends Component {
   clientId =
     process.env.REACT_APP_GOOGLE_CLIENT_ID ||
@@ -26,27 +23,10 @@ class Dashboard extends Component {
     process.env.REACT_APP_SHEET_ID ||
     "1eYrQf0xhs2mTSWEzQRfSM-MD-tCcx1r0NVEacLg3Jrc";
 
-  menu = [
-    {
-      url: '/',
-      icon: "dashboard",
-      text: "Dashboard"
-    },
-    {
-      url: '/charts',
-      icon: "pie_chart",
-      text: "Charts"
-    },
-    {
-      url: '/settings',
-      icon: "settings",
-      text: "Settings"
-    }
-  ];
-
   constructor(props) {
     super(props);
     this.state = props.state;
+    this.state.expenses = [];
   }
 
   componentDidMount() {
@@ -74,10 +54,10 @@ class Dashboard extends Component {
   signedInChanged = (signedIn) => {
     this.setState({ signedIn });
     if (this.state.signedIn) {
-      this.setState({ profile: window.gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile() });
+      this.props.signedInChanged(window.gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile());
       this.load();
     } else {
-      this.setState({ profile: null });
+      this.props.signedInChanged(null);
     }
   };
 
@@ -125,34 +105,9 @@ class Dashboard extends Component {
     };
   }
 
-  openDrawer = () => {
-    this.setState({ drawerOpen: true });
-  };
-
-  closeDrawer = () => {
-    this.setState({ drawerOpen: false });
-  };
-
-  navigateTo = (url) => {
-    this.props.history.push(url)
-  };
-
   render() {
     return (
-      <div
-        className="dashboard-root"
-      >
-        <TopBar
-          title="Dashboard"
-          openDrawer={this.openDrawer}
-        />
-        <Hamburger
-          closeDrawer={this.closeDrawer}
-          menu={this.menu}
-          navigateTo={this.navigateTo}
-          drawerOpen={this.state.drawerOpen}
-          profile={this.state.profile}
-        />
+      <React.Fragment>
         <TopAppBarFixedAdjust>
           {this.state.signedIn === undefined && <LoadingBar />}
           {this.state.signedIn === false &&
@@ -169,7 +124,7 @@ class Dashboard extends Component {
           </div>}
           {this.state.signedIn && this.renderBody()}
         </TopAppBarFixedAdjust>
-      </div>
+      </React.Fragment>
     );
   }
 

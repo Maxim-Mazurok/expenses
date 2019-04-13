@@ -1,14 +1,27 @@
 import React, { Component } from "react";
 
-import { Snackbar } from "@material/react-snackbar";
-import { BrowserRouter, Route } from "react-router-dom";
-
-import Settings from "./components/settings/settings";
-import Dashboard from "./components/dashboard/dashboard";
-
 import "./App.scss";
+import Main from "./components/main";
+import { BrowserRouter } from "react-router-dom";
 
-class App extends Component {
+export default class App extends Component {
+  menu = [
+    {
+      url: '/',
+      icon: "dashboard",
+      text: "Dashboard"
+    },
+    {
+      url: '/charts',
+      icon: "pie_chart",
+      text: "Charts"
+    },
+    {
+      url: '/settings',
+      icon: "settings",
+      text: "Settings"
+    }
+  ];
 
   constructor(props) {
     super(props);
@@ -156,22 +169,14 @@ class App extends Component {
   render() {
     return (
       <BrowserRouter>
-        <Route
-          path="/"
-          exact
-          render={(props) => <Dashboard {...props} state={this.state} />}
-        />
-        <Route
-          path="/settings"
-          render={(props) => <Settings {...props} state={this.state} />}
-        />
-
-        <Snackbar
-          message={this.state.snackbarMessage}
+        <Main
+          navigateTo={this.navigateTo}
+          menu={this.menu}
+          closeDrawer={this.closeDrawer}
+          openDrawer={this.openDrawer}
+          selectedMenuIndex={this.state.selectedMenuIndex}
         />
       </BrowserRouter>
     );
   }
 }
-
-export default App;

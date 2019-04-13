@@ -43,7 +43,7 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
   - [ ] Provide ability to set `clientId` and `spreadsheetId` from front-end (temporary)
   - [ ] Add nodejs/express function to save `clientId` and `spreadsheetId` from front-end to the backend `.env` file
 - [ ] Display current and previous month expense/income on the dashboard
-
+- [ ] Add `window.gapi.auth2.getAuthInstance().signOut();` to the settings page (like in Telegram, for example)
 ---
 
 💰Expenses is a 

@@ -44,7 +44,7 @@ class App extends Component {
       snackbarMessage: '',
       snackbarOpen: false,
       drawerOpen: false,
-      selectedMenu: 0,
+      selectedMenuIndex: 0,
       topAppBarTitle: '',
     };
 

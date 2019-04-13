@@ -19,12 +19,14 @@ import '@material/react-material-icon/dist/material-icon.css';
 import Drawer, { DrawerContent, DrawerHeader, DrawerSubtitle, DrawerTitle } from "@material/react-drawer";
 import "@material/react-drawer/dist/drawer.css";
 
-import List, { ListDivider, ListItem, ListItemGraphic, ListItemText } from "@material/react-list";
+import List, { ListItem, ListItemGraphic, ListItemText } from "@material/react-list";
 import '@material/react-list/dist/list.css';
 
 
 import { Fab } from "@material/react-fab";
 import '@material/react-fab/dist/fab.css';
+
+import { withRouter } from "react-router-dom";
 
 class Dashboard extends Component {
   clientId =
@@ -33,6 +35,24 @@ class Dashboard extends Component {
   spreadsheetId =
     process.env.REACT_APP_SHEET_ID ||
     "1eYrQf0xhs2mTSWEzQRfSM-MD-tCcx1r0NVEacLg3Jrc";
+
+  menu = [
+    {
+      url: '/',
+      icon: "dashboard",
+      text: "Dashboard"
+    },
+    {
+      url: '/charts',
+      icon: "pie_chart",
+      text: "Charts"
+    },
+    {
+      url: '/settings',
+      icon: "settings",
+      text: "Settings"
+    }
+  ];
 
   constructor(props) {
     super(props);
@@ -124,6 +144,13 @@ class Dashboard extends Component {
   }
 
   render() {
+    const menu = this.menu.map(menuItem =>
+      <ListItem>
+        <ListItemGraphic graphic={<MaterialIcon icon={menuItem.icon} />} />
+        <ListItemText primaryText={menuItem.text} />
+      </ListItem>
+    );
+
     return (
       <div
         className="dashboard-root"
@@ -161,39 +188,14 @@ class Dashboard extends Component {
           <DrawerContent>
             <List
               singleSelection
-              selectedIndex={this.state.selectedMenu}
-              handleSelect={() => {/*TODO*/
+              selectedIndex={this.state.selectedMenuIndex}
+              handleSelect={(selectedMenuIndex) => {/*TODO*/
+                this.setState({ selectedMenuIndex });
+                this.props.history.push(this.menu[selectedMenuIndex].url);
+                this.closeDrawer();
               }}
             >
-              <ListItem onClick={() => {
-                this.setState({ selectedMenu: 0 });
-                this.closeDrawer();
-              }}>
-                <ListItemGraphic graphic={<MaterialIcon icon="dashboard" />} />
-                <ListItemText primaryText="Dashboard" />
-              </ListItem>
-              <ListItem onClick={() => {
-                this.setState({ selectedMenu: 1 });
-                this.closeDrawer();
-              }}>
-                <ListItemGraphic graphic={<MaterialIcon icon="pie_chart" />} />
-                <ListItemText primaryText="Charts" />
-              </ListItem>
-              <ListItem onClick={() => {
-                this.setState({ selectedMenu: 2 });
-                this.closeDrawer();
-              }}>
-                <ListItemGraphic graphic={<MaterialIcon icon="settings" />} />
-                <ListItemText primaryText="Settings" />
-              </ListItem>
-              <ListDivider />
-              <ListItem
-                onClick={() => {
-                  window.gapi.auth2.getAuthInstance().signOut();
-                }}
-              >
-                Sign Out
-              </ListItem>
+              {menu}
             </List>
           </DrawerContent>
         </Drawer>
@@ -258,4 +260,4 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard;
+export default withRouter(Dashboard);

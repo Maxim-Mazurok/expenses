@@ -1,0 +1,14 @@
+.dashboard-root {
+  position: relative;
+
+  .add-transaction-fab--fixed {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+
+    @media(min-width: 1024px) {
+      bottom: 1.5rem;
+      right: 1.5rem;
+    }
+  }
+}

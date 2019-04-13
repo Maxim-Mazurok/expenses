@@ -36,7 +36,13 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
   - [ ] Use (non)-relational DBs for storage
 - [ ] Provide as a full SAAS solution
 - [ ] Add true full offline support
-- [ ] `nodemon` for `npm run build`
+- [x] `nodemon` for `npm run build` - don't need this since `npm run dev-start` does this job
+- [ ] Implement user's [onboarding](./ONBOARDING.md) on first start
+  - [ ] At the end of it, there should be dedicated configure/login page
+  - [ ] Handle no `clientId` or `spreadsheetId` edge case
+  - [ ] Provide ability to set `clientId` and `spreadsheetId` from front-end (temporary)
+  - [ ] Add nodejs/express function to save `clientId` and `spreadsheetId` from front-end to the backend `.env` file
+- [ ] Display current and previous month expense/income on the dashboard
 
 ---
 

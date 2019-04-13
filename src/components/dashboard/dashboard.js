@@ -4,13 +4,7 @@ import './dashboard.scss';
 
 import { LoadingBar, OperationForm, OperationsList } from "../index";
 
-import TopAppBar, {
-  TopAppBarFixedAdjust,
-  TopAppBarIcon,
-  TopAppBarRow,
-  TopAppBarSection,
-  TopAppBarTitle
-} from "@material/react-top-app-bar";
+import { TopAppBarFixedAdjust } from "@material/react-top-app-bar";
 import '@material/react-top-app-bar/dist/top-app-bar.css';
 
 import MaterialIcon from "@material/react-material-icon";
@@ -27,6 +21,7 @@ import { Fab } from "@material/react-fab";
 import '@material/react-fab/dist/fab.css';
 
 import { withRouter } from "react-router-dom";
+import TopBar from "../top-bar/top-bar";
 
 class Dashboard extends Component {
   clientId =
@@ -114,7 +109,7 @@ class Dashboard extends Component {
           accounts: accounts,
           categories: categories,
           expenses: (response.result.valueRanges[2].values || [])
-            .map(this.parseExpense)
+            .map(Dashboard.parseExpense)
             .reverse()
             .slice(0, 30),
           processing: false,
@@ -124,7 +119,7 @@ class Dashboard extends Component {
       });
   }
 
-  parseExpense(value, index) {
+  static parseExpense(value, index) {
     return {
       id: `Expenses!A${index + 2}`,
       date: value[0],
@@ -135,13 +130,13 @@ class Dashboard extends Component {
     };
   }
 
-  openDrawer() {
-    this.setState({ drawerOpen: true })
-  }
+  openDrawer = () => {
+    this.setState({ drawerOpen: true });
+  };
 
-  closeDrawer() {
-    this.setState({ drawerOpen: false })
-  }
+  closeDrawer = () => {
+    this.setState({ drawerOpen: false });
+  };
 
   render() {
     const menu = this.menu.map(menuItem =>
@@ -155,20 +150,10 @@ class Dashboard extends Component {
       <div
         className="dashboard-root"
       >
-        <TopAppBar
-          short={true}
-        >
-          <TopAppBarRow>
-            <TopAppBarSection align="start">
-              <TopAppBarIcon navIcon tabIndex={0}>
-                <MaterialIcon hasRipple icon="menu" onClick={() => {
-                  this.openDrawer()
-                }} />
-              </TopAppBarIcon>
-              <TopAppBarTitle>{this.state.topAppBarTitle}</TopAppBarTitle>
-            </TopAppBarSection>
-          </TopAppBarRow>
-        </TopAppBar>
+        <TopBar
+          title="Dashboard"
+          openDrawer={this.openDrawer}
+        />
         <Drawer
           modal
           open={this.state.drawerOpen}
@@ -242,7 +227,7 @@ class Dashboard extends Component {
           onChange={this.handleExpenseChange}
         />
       );
-    else
+    else { // noinspection RequiredAttributes
       return (
         <div>
           <OperationsList
@@ -257,6 +242,7 @@ class Dashboard extends Component {
           />
         </div>
       );
+    }
   }
 }
 

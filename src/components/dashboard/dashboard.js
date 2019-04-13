@@ -10,18 +10,13 @@ import '@material/react-top-app-bar/dist/top-app-bar.css';
 import MaterialIcon from "@material/react-material-icon";
 import '@material/react-material-icon/dist/material-icon.css';
 
-import Drawer, { DrawerContent, DrawerHeader, DrawerSubtitle, DrawerTitle } from "@material/react-drawer";
-import "@material/react-drawer/dist/drawer.css";
-
-import List, { ListItem, ListItemGraphic, ListItemText } from "@material/react-list";
-import '@material/react-list/dist/list.css';
-
-
 import { Fab } from "@material/react-fab";
 import '@material/react-fab/dist/fab.css';
 
 import { withRouter } from "react-router-dom";
+
 import TopBar from "../top-bar/top-bar";
+import Hamburger from "../hamburger/hamburger";
 
 class Dashboard extends Component {
   clientId =
@@ -138,14 +133,11 @@ class Dashboard extends Component {
     this.setState({ drawerOpen: false });
   };
 
-  render() {
-    const menu = this.menu.map(menuItem =>
-      <ListItem>
-        <ListItemGraphic graphic={<MaterialIcon icon={menuItem.icon} />} />
-        <ListItemText primaryText={menuItem.text} />
-      </ListItem>
-    );
+  navigateTo = (url) => {
+    this.props.history.push(url)
+  };
 
+  render() {
     return (
       <div
         className="dashboard-root"
@@ -154,36 +146,13 @@ class Dashboard extends Component {
           title="Dashboard"
           openDrawer={this.openDrawer}
         />
-        <Drawer
-          modal
-          open={this.state.drawerOpen}
-          onClose={() => {
-            this.closeDrawer()
-          }}
-        >
-          <DrawerHeader>
-            <DrawerTitle>
-              {this.state.profile ? this.state.profile.getName() : ''}
-            </DrawerTitle>
-            <DrawerSubtitle>
-              {this.state.profile ? this.state.profile.getEmail() : ''}
-            </DrawerSubtitle>
-          </DrawerHeader>
-
-          <DrawerContent>
-            <List
-              singleSelection
-              selectedIndex={this.state.selectedMenuIndex}
-              handleSelect={(selectedMenuIndex) => {/*TODO*/
-                this.setState({ selectedMenuIndex });
-                this.props.history.push(this.menu[selectedMenuIndex].url);
-                this.closeDrawer();
-              }}
-            >
-              {menu}
-            </List>
-          </DrawerContent>
-        </Drawer>
+        <Hamburger
+          closeDrawer={this.closeDrawer}
+          menu={this.menu}
+          navigateTo={this.navigateTo}
+          drawerOpen={this.state.drawerOpen}
+          profile={this.state.profile}
+        />
         <TopAppBarFixedAdjust>
           {this.state.signedIn === undefined && <LoadingBar />}
           {this.state.signedIn === false &&

@@ -1,13 +1,9 @@
 import React, { Component } from "react";
 import MaterialIcon from "@material/react-material-icon";
 
-import TopAppBar, {
-  TopAppBarIcon,
-  TopAppBarRow,
-  TopAppBarSection,
-  TopAppBarTitle
-} from "@material/react-top-app-bar";
+import TopAppBar, { TopAppBarIcon, TopAppBarRow, TopAppBarSection, TopAppBarTitle } from "@material/react-top-app-bar";
 import '@material/react-top-app-bar/dist/top-app-bar.css';
+import { RouteComponentProps, withRouter } from "react-router";
 
 type TopBarProps = {
   title?: string,
@@ -17,7 +13,7 @@ type TopBarProps = {
 
 type TopBarState = {}
 
-export default class TopBar extends Component<TopBarProps, TopBarState> {
+class TopBar extends Component<RouteComponentProps<{}> & TopBarProps, TopBarState> {
   private openDrawer = () => {
     if (typeof this.props.openDrawer === 'function') {
       this.props.openDrawer();
@@ -52,3 +48,5 @@ export default class TopBar extends Component<TopBarProps, TopBarState> {
     </TopAppBar>;
   }
 }
+
+export default withRouter(TopBar);

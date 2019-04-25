@@ -8,6 +8,7 @@ import "@material/react-drawer/dist/drawer.css";
 
 import List, { ListItem, ListItemGraphic, ListItemText } from "@material/react-list";
 import '@material/react-list/dist/list.css';
+import { RouteComponentProps, withRouter } from "react-router";
 
 type HamburgerProps = {
   drawerOpen?: boolean
@@ -20,7 +21,7 @@ type HamburgerProps = {
 
 type HamburgerState = {}
 
-type MenuItem = {
+export type MenuItem = {
   url: string,
   icon: string,
   text: string
@@ -28,7 +29,7 @@ type MenuItem = {
 
 export type Menu = MenuItem[]
 
-export default class Hamburger extends Component<HamburgerProps, HamburgerState> {
+class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, HamburgerState> {
   private closeDrawer = () => {
     if (typeof this.props.closeDrawer === 'function') {
       this.props.closeDrawer();
@@ -74,7 +75,6 @@ export default class Hamburger extends Component<HamburgerProps, HamburgerState>
           singleSelection
           selectedIndex={this.props.selectedMenuIndex || 0}
           handleSelect={(selectedMenuIndex) => {
-            this.setState({ selectedMenuIndex });
             this.navigateTo(this.props.menu[selectedMenuIndex].url);
             this.closeDrawer();
           }}
@@ -85,3 +85,5 @@ export default class Hamburger extends Component<HamburgerProps, HamburgerState>
     </Drawer>;
   }
 }
+
+export default withRouter(Hamburger);

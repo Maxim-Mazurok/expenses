@@ -15,7 +15,7 @@ class Charts extends Component {
     return (
       <React.Fragment>
         <TopAppBarFixedAdjust>
-          <h1>Settings will be here</h1>
+          <h1>Charts will be here</h1>
         </TopAppBarFixedAdjust>
       </React.Fragment>
     );

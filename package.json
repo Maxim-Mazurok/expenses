@@ -49,7 +49,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev-start": "export HTTPS=true&&HOST=exp.com&&npm start",
+    "dev-start": "export HTTPS=true&&export HOST=exp.com&&npm start",
     "build": "react-scripts build",
     "dev-server": "ws -d build --https --hostname exp.com",
     "test": "react-scripts test --env=jsdom",

@@ -44,6 +44,8 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
   - [ ] Add nodejs/express function to save `clientId` and `spreadsheetId` from front-end to the backend `.env` file
 - [ ] Display current and previous month expense/income on the dashboard
 - [ ] Add `window.gapi.auth2.getAuthInstance().signOut();` to the settings page (like in Telegram, for example)
+- [ ] Load more transactions, as user scrolls (they are already loaded, just show them)
+- [ ] Fix user information not showing up on the pages other then "Dashboard"
 ---
 
 💰Expenses is a 

@@ -46,6 +46,19 @@ export default class App extends Component {
 
   }
 
+  static formatExpense(expense) {
+    return [
+      `=DATE(${expense.date.substr(0, 4)}, ${expense.date.substr(
+        5,
+        2
+      )}, ${expense.date.substr(-2)})`,
+      expense.description,
+      expense.account,
+      expense.category,
+      expense.amount,
+    ];
+  }
+
   handleExpenseSubmit = () => {
     this.setState({ processing: true, showExpenseForm: false });
     const submitAction = (this.state.expense.id
@@ -134,19 +147,6 @@ export default class App extends Component {
     });
   }
 
-  static formatExpense(expense) {
-    return [
-      `=DATE(${expense.date.substr(0, 4)}, ${expense.date.substr(
-        5,
-        2
-      )}, ${expense.date.substr(-2)})`,
-      expense.description,
-      expense.account,
-      expense.category,
-      expense.amount,
-    ];
-  }
-
   append(expense) {
     return window.gapi.client.sheets.spreadsheets.values.append({
       spreadsheetId: this.spreadsheetId,
@@ -174,7 +174,6 @@ export default class App extends Component {
           menu={this.menu}
           closeDrawer={this.closeDrawer}
           openDrawer={this.openDrawer}
-          selectedMenuIndex={this.state.selectedMenuIndex}
         />
       </BrowserRouter>
     );

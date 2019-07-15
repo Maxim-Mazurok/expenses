@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 
 import { Route, RouteComponentProps, withRouter } from "react-router-dom";
-import TopBar from "./top-bar/top-bar";
-import Hamburger, { Menu, MenuItem } from "./hamburger/hamburger";
+import { HamburgerConnected, Menu, MenuItem } from "./hamburger/hamburger";
 import Dashboard from "./dashboard/dashboard";
 import Settings from "./settings/settings";
 import { Snackbar } from "@material/react-snackbar";
 import Charts from "./charts/charts";
+import { TopBarConnected } from "./top-bar/top-bar";
 
 type MainProps = {
   openDrawer: () => void
@@ -49,28 +49,27 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
     return this.props.menu.filter((menuItem: MenuItem) => menuItem.url === pathname)[0].text;
   };
 
-  getSelectedMenuIndex = (): number => {
-    const { pathname } = this.props.location;
-    return this.props.menu.findIndex((menuItem: MenuItem) => menuItem.url === pathname);
-  };
+  // getSelectedMenuIndex = (): number => {
+  //   const { pathname } = this.props.location;
+  //   return this.props.menu.findIndex((menuItem: MenuItem) => menuItem.url === pathname);
+  // };
 
   render(): React.ReactElement<RouteComponentProps<{}> & MainProps, React.JSXElementConstructor<MainState>> {
     return (
       <React.Fragment>
-        <TopBar
+        <TopBarConnected
           title={this.getTopBarTitle()}
           openDrawer={this.openDrawer}
         />
-        <Hamburger
+        <HamburgerConnected
           closeDrawer={this.closeDrawer}
           menu={this.props.menu}
           navigateTo={this.navigateTo}
           drawerOpen={this.state.drawerOpen}
           profile={this.state.profile}
-          selectedMenuIndex={this.getSelectedMenuIndex()}
         />
         <div
-          className={`${this.props.menu[this.getSelectedMenuIndex()].text.toLowerCase()}-root`}
+          // className={`${this.props.menu[this.getSelectedMenuIndex()].text.toLowerCase()}-root`}
         >
           <Route
             path="/"

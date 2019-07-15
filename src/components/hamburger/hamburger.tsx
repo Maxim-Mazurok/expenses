@@ -1,5 +1,3 @@
-/* global gapi */
-
 import React, { Component } from "react";
 import MaterialIcon from "@material/react-material-icon";
 
@@ -8,18 +6,36 @@ import "@material/react-drawer/dist/drawer.css";
 
 import List, { ListItem, ListItemGraphic, ListItemText } from "@material/react-list";
 import '@material/react-list/dist/list.css';
+import GlobalState, { SelectedMenuIndex } from "../../types/GlobalState";
+import { selectMenu } from "../../actions";
+import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { RouteComponentProps, withRouter } from "react-router";
+import { connect } from "react-redux";
 
-type HamburgerProps = {
+const mapStateToProps = (state: GlobalState) => ({
+  selectedMenuIndex: state.selectedMenuIndex,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
+  bindActionCreators(
+    {
+      onSelect: (index: SelectedMenuIndex) => dispatch(selectMenu(index)),
+    },
+    dispatch
+  );
+
+type HamburgerProps = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps> & {
   drawerOpen?: boolean
   closeDrawer: () => void
   navigateTo: (url: string) => void
   profile?: gapi.auth2.BasicProfile | null
-  selectedMenuIndex?: number
   menu: Menu
-}
+};
 
-type HamburgerState = {}
+type HamburgerState = {
+  selectedMenuIndex: SelectedMenuIndex,
+}
 
 export type MenuItem = {
   url: string,
@@ -30,6 +46,10 @@ export type MenuItem = {
 export type Menu = MenuItem[]
 
 class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, HamburgerState> {
+  readonly state: HamburgerState = {
+    selectedMenuIndex: undefined,
+  };
+
   private closeDrawer = () => {
     if (typeof this.props.closeDrawer === 'function') {
       this.props.closeDrawer();
@@ -73,9 +93,10 @@ class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, Hamb
       <DrawerContent>
         <List
           singleSelection
-          selectedIndex={this.props.selectedMenuIndex || 0}
-          handleSelect={(selectedMenuIndex) => {
-            this.navigateTo(this.props.menu[selectedMenuIndex].url);
+          selectedIndex={this.state.selectedMenuIndex || 0}
+          handleSelect={(menuIndex) => {
+            this.props.onSelect(menuIndex);
+            this.navigateTo(this.props.menu[menuIndex].url);
             this.closeDrawer();
           }}
         >
@@ -86,4 +107,7 @@ class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, Hamb
   }
 }
 
-export default withRouter(Hamburger);
+export const HamburgerConnected = withRouter(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Hamburger));

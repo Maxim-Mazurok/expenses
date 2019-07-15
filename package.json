@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "10.15.3",
-    "npm": "6.9.0"
+    "node": "10.16.0",
+    "npm": "6.10.0"
   },
   "dependencies": {
     "@material/auto-init": "^1.0.0",
@@ -31,7 +31,9 @@
     "@types/node": "^11.13.4",
     "@types/react": "^16.8.13",
     "@types/react-dom": "^16.8.4",
+    "@types/react-redux": "^7.0.9",
     "@types/react-router-dom": "^4.3.2",
+    "cross-env": "^5.2.0",
     "material-components-web": "^1.1.1",
     "material-icons": "^0.3.1",
     "node-sass": "^4.11.0",
@@ -41,15 +43,18 @@
     "react-router-dom": "^5.0.0",
     "redux": "^4.0.1",
     "rxjs": "^6.4.0",
-    "typescript": "3.3.4000"
+    "typescript": "^3.5.1",
+    "typesafe-actions": "latest"
   },
   "devDependencies": {
     "local-web-server": "^2.6.1",
-    "react-scripts": "^3.0.0-next.b0cbf2ca"
+    "npm-check-updates": "^3.1.20",
+    "react-scripts": "^3.0.0-next.b0cbf2ca",
+    "redux-devtools-extension": "^2.13.8"
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev-start": "export HTTPS=true&&export HOST=exp.com&&npm start",
+    "dev-start": "cross-env HTTPS=true HOST=exp.com NODE_PATH=./src npm start",
     "build": "react-scripts build",
     "dev-server": "ws -d build --https --hostname exp.com",
     "test": "react-scripts test --env=jsdom",

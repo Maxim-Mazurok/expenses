@@ -4,16 +4,29 @@ import MaterialIcon from "@material/react-material-icon";
 import TopAppBar, { TopAppBarIcon, TopAppBarRow, TopAppBarSection, TopAppBarTitle } from "@material/react-top-app-bar";
 import '@material/react-top-app-bar/dist/top-app-bar.css';
 import { RouteComponentProps, withRouter } from "react-router";
+import GlobalState, { SelectedMenuIndex } from "../../types/GlobalState";
+import { connect } from "react-redux";
 
-type TopBarProps = {
+
+const mapStateToProps = (state: GlobalState) => ({
+  selectedMenuIndex: state.selectedMenuIndex,
+});
+
+export type TopBarProps = ReturnType<typeof mapStateToProps> & {
   title?: string,
   openDrawer: () => void,
   short?: boolean
+};
+
+type TopBarState = {
+  selectedMenuIndex: SelectedMenuIndex,
 }
 
-type TopBarState = {}
-
 class TopBar extends Component<RouteComponentProps<{}> & TopBarProps, TopBarState> {
+  readonly state: TopBarState = {
+    selectedMenuIndex: undefined,
+  };
+
   private openDrawer = () => {
     if (typeof this.props.openDrawer === 'function') {
       this.props.openDrawer();
@@ -41,7 +54,7 @@ class TopBar extends Component<RouteComponentProps<{}> & TopBarProps, TopBarStat
               onClick={this.openDrawer.bind(this)} />
           </TopAppBarIcon>
           <TopAppBarTitle>
-            {this.props.title || ''}
+            {this.props.selectedMenuIndex || 'no'}
           </TopAppBarTitle>
         </TopAppBarSection>
       </TopAppBarRow>
@@ -49,4 +62,6 @@ class TopBar extends Component<RouteComponentProps<{}> & TopBarProps, TopBarStat
   }
 }
 
-export default withRouter(TopBar);
+export const TopBarConnected = withRouter(connect(
+  mapStateToProps,
+)(TopBar));

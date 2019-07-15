@@ -46,6 +46,7 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
 - [ ] Add `window.gapi.auth2.getAuthInstance().signOut();` to the settings page (like in Telegram, for example)
 - [ ] Load more transactions, as user scrolls (they are already loaded, just show them)
 - [ ] Fix user information not showing up on the pages other then "Dashboard"
+- [ ] Probably, get rid of all `@material/*` deps
 ---
 
 💰Expenses is a 

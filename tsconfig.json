@@ -21,7 +21,8 @@
     "types": [
       "gapi",
       "gapi.auth2"
-    ]
+    ],
+    "baseUrl": "./src"
   },
   "compileOnSave": false,
   "include": [

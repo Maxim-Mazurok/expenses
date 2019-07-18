@@ -63,7 +63,7 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
           profile={this.state.profile}
         />
         <div
-          className={`${this.props.selectedMenuTitle}-root`}
+          className={`${this.props.selectedMenuTitle.toLowerCase()}-root`}
         >
           <Route
             path="/"

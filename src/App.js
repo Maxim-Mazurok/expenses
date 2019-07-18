@@ -1,28 +1,10 @@
 import React, { Component } from "react";
 
 import "./App.scss";
-import Main from "./components/main";
+import { MainConnected } from "./components/main";
 import { BrowserRouter } from "react-router-dom";
 
 export default class App extends Component {
-  menu = [
-    {
-      url: '/',
-      icon: "dashboard",
-      text: "Dashboard"
-    },
-    {
-      url: '/charts',
-      icon: "pie_chart",
-      text: "Charts"
-    },
-    {
-      url: '/settings',
-      icon: "settings",
-      text: "Settings"
-    }
-  ];
-
   constructor(props) {
     super(props);
 
@@ -169,9 +151,8 @@ export default class App extends Component {
   render() {
     return (
       <BrowserRouter>
-        <Main
+        <MainConnected
           navigateTo={this.navigateTo}
-          menu={this.menu}
           closeDrawer={this.closeDrawer}
           openDrawer={this.openDrawer}
         />

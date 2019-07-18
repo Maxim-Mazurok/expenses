@@ -1,18 +1,24 @@
 import React, { Component } from "react";
 
 import { Route, RouteComponentProps, withRouter } from "react-router-dom";
-import { HamburgerConnected, Menu, MenuItem } from "./hamburger/hamburger";
+import { HamburgerConnected } from "./hamburger/hamburger";
 import Dashboard from "./dashboard/dashboard";
 import Settings from "./settings/settings";
 import { Snackbar } from "@material/react-snackbar";
 import Charts from "./charts/charts";
 import { TopBarConnected } from "./top-bar/top-bar";
+import { connect } from "react-redux";
+import GlobalState from "../types/GlobalState";
+import { getSelectedMenuTitle } from "../selectors";
 
-type MainProps = {
+const mapStateToProps = (state: GlobalState) => ({
+  selectedMenuTitle: getSelectedMenuTitle(state),
+});
+
+type MainProps = ReturnType<typeof mapStateToProps> & {
   openDrawer: () => void
   closeDrawer: () => void
   navigateTo: () => void
-  menu: Menu
 }
 
 type MainState = {
@@ -44,32 +50,20 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
     this.setState({ profile });
   };
 
-  getTopBarTitle = (): string => {
-    const { pathname } = this.props.location;
-    return this.props.menu.filter((menuItem: MenuItem) => menuItem.url === pathname)[0].text;
-  };
-
-  // getSelectedMenuIndex = (): number => {
-  //   const { pathname } = this.props.location;
-  //   return this.props.menu.findIndex((menuItem: MenuItem) => menuItem.url === pathname);
-  // };
-
   render(): React.ReactElement<RouteComponentProps<{}> & MainProps, React.JSXElementConstructor<MainState>> {
     return (
       <React.Fragment>
         <TopBarConnected
-          title={this.getTopBarTitle()}
           openDrawer={this.openDrawer}
         />
         <HamburgerConnected
           closeDrawer={this.closeDrawer}
-          menu={this.props.menu}
           navigateTo={this.navigateTo}
           drawerOpen={this.state.drawerOpen}
           profile={this.state.profile}
         />
         <div
-          // className={`${this.props.menu[this.getSelectedMenuIndex()].text.toLowerCase()}-root`}
+          className={`${this.props.selectedMenuTitle}-root`}
         >
           <Route
             path="/"
@@ -78,17 +72,16 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
               <Dashboard
                 {...props}
                 state={this.state}
-                menu={this.props.menu}
                 signedInChanged={this.signedInChanged}
               />}
           />
           <Route
             path="/charts"
-            render={(props) => <Charts {...props} state={this.state} menu={this.props.menu} />}
+            render={(props) => <Charts {...props} state={this.state} />}
           />
           <Route
             path="/settings"
-            render={(props) => <Settings {...props} state={this.state} menu={this.props.menu} />}
+            render={(props) => <Settings {...props} state={this.state} />}
           />
         </div>
         <Snackbar
@@ -99,4 +92,6 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
   }
 }
 
-export default withRouter(Main);
+export const MainConnected = withRouter(connect(
+  mapStateToProps
+)(Main));

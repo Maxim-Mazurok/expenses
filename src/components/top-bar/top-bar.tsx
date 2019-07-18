@@ -6,14 +6,15 @@ import '@material/react-top-app-bar/dist/top-app-bar.css';
 import { RouteComponentProps, withRouter } from "react-router";
 import GlobalState, { SelectedMenuIndex } from "../../types/GlobalState";
 import { connect } from "react-redux";
+import { getSelectedMenuIndex, getSelectedMenuTitle } from "../../selectors";
 
 
 const mapStateToProps = (state: GlobalState) => ({
-  selectedMenuIndex: state.selectedMenuIndex,
+  selectedMenuIndex: getSelectedMenuIndex(state),
+  selectedMenuTitle: getSelectedMenuTitle(state),
 });
 
 export type TopBarProps = ReturnType<typeof mapStateToProps> & {
-  title?: string,
   openDrawer: () => void,
   short?: boolean
 };
@@ -23,18 +24,6 @@ type TopBarState = {
 }
 
 class TopBar extends Component<RouteComponentProps<{}> & TopBarProps, TopBarState> {
-  readonly state: TopBarState = {
-    selectedMenuIndex: undefined,
-  };
-
-  private openDrawer = () => {
-    if (typeof this.props.openDrawer === 'function') {
-      this.props.openDrawer();
-    } else {
-      console.warn('openDrawer is not a function');
-    }
-  };
-
   render(): React.ReactElement<TopBarProps, React.JSXElementConstructor<TopBarState>> {
     // noinspection HtmlDeprecatedAttribute
     return <TopAppBar
@@ -54,12 +43,20 @@ class TopBar extends Component<RouteComponentProps<{}> & TopBarProps, TopBarStat
               onClick={this.openDrawer.bind(this)} />
           </TopAppBarIcon>
           <TopAppBarTitle>
-            {this.props.selectedMenuIndex || 'no'}
+            {this.props.selectedMenuTitle}
           </TopAppBarTitle>
         </TopAppBarSection>
       </TopAppBarRow>
     </TopAppBar>;
   }
+
+  private openDrawer = () => {
+    if (typeof this.props.openDrawer === 'function') {
+      this.props.openDrawer();
+    } else {
+      console.warn('openDrawer is not a function');
+    }
+  };
 }
 
 export const TopBarConnected = withRouter(connect(

@@ -6,20 +6,21 @@ import "@material/react-drawer/dist/drawer.css";
 
 import List, { ListItem, ListItemGraphic, ListItemText } from "@material/react-list";
 import '@material/react-list/dist/list.css';
-import GlobalState, { SelectedMenuIndex } from "../../types/GlobalState";
+import GlobalState from "../../types/GlobalState";
 import { selectMenu } from "../../actions";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { RouteComponentProps, withRouter } from "react-router";
 import { connect } from "react-redux";
+import { getSelectedMenuIndex, Menu, MenuItem } from "../../selectors";
 
 const mapStateToProps = (state: GlobalState) => ({
-  selectedMenuIndex: state.selectedMenuIndex,
+  selectedMenuIndex: getSelectedMenuIndex(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
-      onSelect: (index: SelectedMenuIndex) => dispatch(selectMenu(index)),
+      selectMenu,
     },
     dispatch
   );
@@ -30,22 +31,13 @@ type HamburgerProps = ReturnType<typeof mapStateToProps> &
   closeDrawer: () => void
   navigateTo: (url: string) => void
   profile?: gapi.auth2.BasicProfile | null
-  menu: Menu
 };
 
 type HamburgerState = ReturnType<typeof mapStateToProps>
 
-export type MenuItem = {
-  url: string,
-  icon: string,
-  text: string
-}
-
-export type Menu = MenuItem[]
-
 class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, HamburgerState> {
   render(): React.ReactElement<HamburgerProps, React.JSXElementConstructor<HamburgerState>> {
-    const menu = this.props.menu.map((menuItem: MenuItem) =>
+    const menu = Menu.map((menuItem: MenuItem) =>
       <ListItem
         key={menuItem.text}
       >
@@ -73,8 +65,8 @@ class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, Hamb
           singleSelection
           selectedIndex={this.props.selectedMenuIndex || 0}
           handleSelect={(menuIndex) => {
-            this.props.onSelect(menuIndex);
-            this.navigateTo(this.props.menu[menuIndex].url);
+            this.props.selectMenu(menuIndex);
+            this.navigateTo(Menu[menuIndex].url);
             this.closeDrawer();
           }}
         >

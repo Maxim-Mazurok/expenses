@@ -5,7 +5,7 @@ import { Actions } from "./actions";
 import { devToolsEnhancer } from 'redux-devtools-extension';
 
 function configureStore(state: GlobalState = {
-  selectedMenuIndex: undefined,
+  selectedMenuIndex: 0,
 }) {
   return createStore(
     menuReducer as Reducer<GlobalState, Actions>,

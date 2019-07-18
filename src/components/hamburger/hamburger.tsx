@@ -33,9 +33,7 @@ type HamburgerProps = ReturnType<typeof mapStateToProps> &
   menu: Menu
 };
 
-type HamburgerState = {
-  selectedMenuIndex: SelectedMenuIndex,
-}
+type HamburgerState = ReturnType<typeof mapStateToProps>
 
 export type MenuItem = {
   url: string,
@@ -46,26 +44,6 @@ export type MenuItem = {
 export type Menu = MenuItem[]
 
 class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, HamburgerState> {
-  readonly state: HamburgerState = {
-    selectedMenuIndex: undefined,
-  };
-
-  private closeDrawer = () => {
-    if (typeof this.props.closeDrawer === 'function') {
-      this.props.closeDrawer();
-    } else {
-      console.warn('closeDrawer is not a function');
-    }
-  };
-
-  private navigateTo = (url: string = '/') => {
-    if (typeof this.props.navigateTo === 'function') {
-      this.props.navigateTo(url);
-    } else {
-      console.warn('navigateTo is not a function');
-    }
-  };
-
   render(): React.ReactElement<HamburgerProps, React.JSXElementConstructor<HamburgerState>> {
     const menu = this.props.menu.map((menuItem: MenuItem) =>
       <ListItem
@@ -93,7 +71,7 @@ class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, Hamb
       <DrawerContent>
         <List
           singleSelection
-          selectedIndex={this.state.selectedMenuIndex || 0}
+          selectedIndex={this.props.selectedMenuIndex || 0}
           handleSelect={(menuIndex) => {
             this.props.onSelect(menuIndex);
             this.navigateTo(this.props.menu[menuIndex].url);
@@ -105,6 +83,22 @@ class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, Hamb
       </DrawerContent>
     </Drawer>;
   }
+
+  private closeDrawer = () => {
+    if (typeof this.props.closeDrawer === 'function') {
+      this.props.closeDrawer();
+    } else {
+      console.warn('closeDrawer is not a function');
+    }
+  };
+
+  private navigateTo = (url: string = '/') => {
+    if (typeof this.props.navigateTo === 'function') {
+      this.props.navigateTo(url);
+    } else {
+      console.warn('navigateTo is not a function');
+    }
+  };
 }
 
 export const HamburgerConnected = withRouter(connect(

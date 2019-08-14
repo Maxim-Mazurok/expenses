@@ -1,9 +1,14 @@
-import React, { Component } from "react";
-import OperationDetails from "./OperationDetails.js"
-import "@material/list/dist/mdc.list.css";
-import "./OperationsList.css";
+import React, { Component } from 'react';
+import '@material/list/dist/mdc.list.css';
+import './OperationsList.css';
+import OperationDetails from './OperationDetails';
 
-class OperationsList extends Component {
+interface Props {
+  expenses: Expense[]
+  onSelect: (expense: Expense) => void
+}
+
+class OperationsList extends Component<Props> {
   render() {
     return (
       <ul className="mdc-list mdc-list--two-line mdc-list--avatar-list">
@@ -12,7 +17,7 @@ class OperationsList extends Component {
             key={expense.id}
             expense={expense}
             onSelect={this.props.onSelect}
-          />
+          />,
         )}
       </ul>
     );

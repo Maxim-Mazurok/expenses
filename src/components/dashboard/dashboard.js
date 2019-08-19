@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import './dashboard.scss';
 
-import { LoadingBar, OperationForm, OperationsList } from "../index";
+import { OperationForm, OperationsList } from "../index";
 
 import { TopAppBarFixedAdjust } from "@material/react-top-app-bar";
 import '@material/react-top-app-bar/dist/top-app-bar.css';
@@ -12,6 +12,9 @@ import '@material/react-material-icon/dist/material-icon.css';
 
 import { Fab } from "@material/react-fab";
 import '@material/react-fab/dist/fab.css';
+
+import LinearProgress from '@material/react-linear-progress';
+import '@material/react-linear-progress/dist/linear-progress.css';
 
 import { withRouter } from "react-router-dom";
 
@@ -110,7 +113,7 @@ class Dashboard extends Component {
     return (
       <React.Fragment>
         <TopAppBarFixedAdjust>
-          {this.state.signedIn === undefined && <LoadingBar />}
+          {this.state.signedIn === undefined && <LinearProgress indeterminate={true} />}
           {this.state.signedIn === false &&
           <div className="center">
             <button
@@ -130,7 +133,7 @@ class Dashboard extends Component {
   }
 
   renderBody() {
-    if (this.state.processing) return <LoadingBar />;
+    if (this.state.processing) return <LinearProgress indeterminate={true} />;
     else
       return (
         <div className="content">

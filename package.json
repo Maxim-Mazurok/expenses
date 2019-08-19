@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "10.16.2",
+    "node": "10.16.3",
     "npm": "6.10.3"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "@material/react-drawer": "^0.15.0",
     "@material/react-fab": "^0.15.0",
     "@material/react-layout-grid": "^0.15.0",
+    "@material/react-linear-progress": "^0.15.0",
     "@material/react-list": "^0.15.0",
     "@material/react-material-icon": "^0.15.0",
     "@material/react-snackbar": "^0.15.0",

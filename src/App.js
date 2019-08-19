@@ -24,8 +24,21 @@ export default class App extends Component {
       drawerOpen: false,
       selectedMenuIndex: 0,
       topAppBarTitle: '',
+      isGapiReady: false,
     };
+  }
 
+  loadGAPI = () => {
+    const script = document.createElement('script');
+    script.src = 'https://apis.google.com/js/api.js';
+    window.document.body.appendChild(script);
+    script.addEventListener('load', () => {
+      this.setState({isGapiReady: true});
+    });
+  };
+
+  componentDidMount() {
+    this.loadGAPI();
   }
 
   static formatExpense(expense) {
@@ -149,7 +162,7 @@ export default class App extends Component {
   }
 
   render() {
-    return (
+    return this.state.isGapiReady ? (
       <BrowserRouter>
         <MainConnected
           navigateTo={this.navigateTo}
@@ -157,6 +170,6 @@ export default class App extends Component {
           openDrawer={this.openDrawer}
         />
       </BrowserRouter>
-    );
+    ) : null;
   }
 }

@@ -30,6 +30,7 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
+    console.log('dash');
     window.gapi.load("client:auth2", () => {
       window.gapi.client
         .init({

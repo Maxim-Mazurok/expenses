@@ -1,15 +1,15 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
-import { Route, RouteComponentProps, withRouter } from "react-router-dom";
-import { HamburgerConnected } from "./hamburger/hamburger";
-import Dashboard from "./dashboard/dashboard";
-import Settings from "./settings/settings";
-import { Snackbar } from "@material/react-snackbar";
-import Charts from "./charts/charts";
-import { TopBarConnected } from "./top-bar/top-bar";
-import { connect } from "react-redux";
-import GlobalState from "../types/GlobalState";
-import { getSelectedMenuTitle } from "../selectors";
+import { Route, RouteComponentProps, withRouter } from 'react-router-dom';
+import { HamburgerConnected } from './hamburger/hamburger';
+import Dashboard from './dashboard/dashboard';
+import Settings from './settings/Settings';
+import { Snackbar } from '@material/react-snackbar';
+import Charts from './charts/Charts';
+import { TopBarConnected } from './top-bar/top-bar';
+import { connect } from 'react-redux';
+import GlobalState from '../types/GlobalState';
+import { getSelectedMenuTitle } from '../selectors';
 
 const mapStateToProps = (state: GlobalState) => ({
   selectedMenuTitle: getSelectedMenuTitle(state),
@@ -77,11 +77,11 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
           />
           <Route
             path="/charts"
-            render={(props) => <Charts {...props} state={this.state} />}
+            render={(props) => <Charts {...props} />}
           />
           <Route
             path="/settings"
-            render={(props) => <Settings {...props} state={this.state} />}
+            render={(props) => <Settings {...props} />}
           />
         </div>
         <Snackbar
@@ -93,5 +93,5 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
 }
 
 export const MainConnected = withRouter(connect(
-  mapStateToProps
+  mapStateToProps,
 )(Main));

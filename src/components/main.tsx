@@ -21,7 +21,7 @@ type MainProps = ReturnType<typeof mapStateToProps> & {
   navigateTo: () => void
 }
 
-type MainState = {
+export interface MainState {
   snackbarMessage: string,
   drawerOpen: boolean
   profile: gapi.auth2.BasicProfile | null
@@ -46,7 +46,7 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
     this.props.history.push(url);
   };
 
-  signedInChanged = (profile: gapi.auth2.BasicProfile | null) => {
+  signedInChanged = (profile: gapi.auth2.BasicProfile | null): void => {
     this.setState({ profile });
   };
 
@@ -71,7 +71,6 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
             render={(props) =>
               <Dashboard
                 {...props}
-                state={this.state}
                 signedInChanged={this.signedInChanged}
               />}
           />

@@ -2,6 +2,36 @@ import React, { Component } from 'react';
 
 import { MainConnected } from './components/main';
 import { BrowserRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import GlobalState from './types/GlobalState';
+import { getClientId, getSpreadSheetId } from './selectors';
+import { AnyAction, bindActionCreators, Dispatch } from 'redux';
+import { setProfile } from './actions/setProfile';
+import { setGapiReady } from './actions/setGapiReady';
+import { parseExpense } from './helpers';
+import { setExpenses } from './actions/setExpenses';
+import { setAccounts } from './actions/setAccounts';
+import { setCategories } from './actions/setCategories';
+
+const mapStateToProps = (state: GlobalState) => ({
+  clientId: getClientId(state),
+  spreadSheetId: getSpreadSheetId(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
+  bindActionCreators(
+    {
+      setProfile,
+      setGapiReady,
+      setCategories,
+      setAccounts,
+      setExpenses,
+    },
+    dispatch,
+  );
+
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps> & {}
 
 interface State {
   accounts: string[],
@@ -17,7 +47,7 @@ interface State {
   isGapiReady: boolean,
 }
 
-export default class App extends Component<{}, State> {
+class App extends Component<Props, State> {
   state = {
     accounts: [],
     categories: [],
@@ -52,17 +82,109 @@ export default class App extends Component<{}, State> {
     ];
   }
 
-  loadGAPI = () => {
+  loadGAPI = (): Promise<void> => {
     const script = document.createElement('script');
     script.src = 'https://apis.google.com/js/api.js';
     window.document.body.appendChild(script);
-    script.addEventListener('load', () => {
-      this.setState({ isGapiReady: true });
+    return new Promise<void>((resolve, reject) => {
+      script.addEventListener('error', error => reject(error));
+      script.addEventListener('load', () => resolve());
     });
   };
 
-  componentDidMount() {
-    this.loadGAPI();
+  loadClient = (): Promise<void> => {
+    return new Promise<void>(((resolve, reject) => {
+      gapi.load('client:auth2', {
+        callback: () => resolve(),
+        onerror: () => reject(new Error('Error loading client')),
+        // timeout: 5000,
+        // ontimeout: () => reject(new Error('Client loading timed out')),
+      });
+    }));
+  };
+
+  signIn = (): void => {
+    gapi.auth2
+      .getAuthInstance()
+      .isSignedIn.listen(this.signedInChanged);
+    this.signedInChanged(
+      gapi.auth2.getAuthInstance().isSignedIn.get(),
+    );
+  };
+
+  signedInChanged = (signedIn: boolean) => {
+    console.log('signedInChanged', signedIn);
+    if (signedIn) {
+      this.props.setProfile(gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile());
+    } else {
+      this.props.setProfile(undefined);
+    }
+  };
+
+  initClient = (): Promise<void> => {
+    return gapi.client
+      .init({
+        discoveryDocs: [
+          'https://sheets.googleapis.com/$discovery/rest?version=v4',
+        ],
+        clientId: this.props.clientId,
+        scope:
+          'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.metadata.readonly',
+      });
+  };
+
+  loadAllData = async (): Promise<void> => {
+    const response: gapi.client.Response<gapi.client.sheets.BatchGetValuesResponse> = await gapi.client.sheets.spreadsheets.values
+      .batchGet({
+        spreadsheetId: this.props.spreadSheetId,
+        ranges: [
+          'Data!A2:A50',
+          'Data!E2:E50',
+          'Expenses!A2:F',
+          'Current!H1',
+          'Previous!H1',
+        ],
+      });
+    if (response.result.valueRanges === undefined
+      || response.result.valueRanges[0].values === undefined // accounts
+      || response.result.valueRanges[1].values === undefined // categories
+      || response.result.valueRanges[2].values === undefined // expenses
+      || response.result.valueRanges[3].values === undefined // currentMonth
+      || response.result.valueRanges[4].values === undefined // previousMonth
+    ) {
+      return;
+    }
+
+    this.props.setAccounts(response.result.valueRanges[0].values.map(
+      (items: string[]) => items[0],
+    ));
+
+    this.props.setCategories(response.result.valueRanges[1].values.map(
+      (items: string[]) => items[0],
+    ));
+
+    this.props.setExpenses(response.result.valueRanges[2].values
+      .map(parseExpense)
+      .reverse(),
+    );
+
+    // this.setState({
+    //   currentMonth: response.result.valueRanges[3].values[0][0],
+    //   previousMonth: response.result.valueRanges[4].values[0][0],
+    // });
+  };
+
+  async componentDidMount() {
+    try {
+      await this.loadGAPI();
+      await this.loadClient();
+      await this.initClient();
+      this.props.setGapiReady(true);
+      this.loadAllData();
+      this.signIn();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   /*
@@ -174,10 +296,15 @@ export default class App extends Component<{}, State> {
   }*/
 
   render() {
-    return this.state.isGapiReady ? (
+    return (
       <BrowserRouter>
         <MainConnected />
       </BrowserRouter>
-    ) : null;
+    );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);

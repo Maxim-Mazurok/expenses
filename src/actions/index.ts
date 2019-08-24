@@ -1,9 +1,27 @@
-import { SelectMenuAction } from './selectMenuAction';
-import { action } from 'typesafe-actions';
-import { SelectedMenuIndex } from '../types/GlobalState';
+import { SetClientId } from './setClientId';
+import { SetSpreadSheetId } from './setSpreadSheetId';
+import { SetGapiReady } from './setGapiReady';
+import { SetProfile } from './setProfile';
+import { SelectMenu } from './selectMenu';
+import { SetCategories } from './setCategories';
+import { SetAccounts } from './setAccounts';
+import { SetExpenses } from './setExpenses';
 
-export const SELECT_MENU = 'selectMenuAction';
+export type MenuActions = SelectMenu
+export type SettingsActions =
+  | SetClientId
+  | SetProfile
+  | SetSpreadSheetId
+export type MiscActions =
+  | SetGapiReady
+export type DataActions =
+  | SetCategories
+  | SetAccounts
+  | SetExpenses
 
-export type Actions = SelectMenuAction;
-
-export const selectMenu = (index: SelectedMenuIndex) => action(SELECT_MENU, index);
+export type Actions =
+  & MenuActions
+  & SettingsActions
+  & MiscActions
+  & DataActions
+  ;

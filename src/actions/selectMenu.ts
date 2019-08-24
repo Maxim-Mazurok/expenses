@@ -1,12 +1,13 @@
-import { SELECT_MENU } from './index';
 import { SelectedMenuIndex } from '../types/GlobalState';
 
-export const selectMenuAction = (index: SelectedMenuIndex): SelectMenuAction => ({
+export const SELECT_MENU = 'selectMenu';
+
+export const selectMenu = (index: SelectedMenuIndex): SelectMenu => ({
   type: SELECT_MENU,
   payload: index,
 });
 
-export interface SelectMenuAction {
+export interface SelectMenu {
   type: typeof SELECT_MENU,
   payload: SelectedMenuIndex,
 }

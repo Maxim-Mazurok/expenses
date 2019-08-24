@@ -26,3 +26,12 @@ export const iconFromCategory = (category: Expense['category']): string => {
       return 'attach_money';
   }
 };
+
+export const parseExpense = (value: string[], index: number): Expense => ({
+  id: `Expenses!A${index + 2}`,
+  date: value[0],
+  description: value[1],
+  category: value[3],
+  amount: value[4].replace(',', ''),
+  account: value[2],
+});

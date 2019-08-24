@@ -20,14 +20,12 @@ type MainProps = ReturnType<typeof mapStateToProps> & {}
 export interface MainState {
   snackbarMessage: string,
   drawerOpen: boolean
-  profile: gapi.auth2.BasicProfile | null
 }
 
 class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
   state: MainState = {
     snackbarMessage: '',
     drawerOpen: false,
-    profile: null,
   };
 
   openDrawer = () => {
@@ -42,10 +40,6 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
     this.props.history.push(url);
   };
 
-  signedInChanged = (profile: gapi.auth2.BasicProfile | null): void => {
-    this.setState({ profile });
-  };
-
   render(): React.ReactElement<RouteComponentProps<{}> & MainProps, React.JSXElementConstructor<MainState>> {
     return (
       <React.Fragment>
@@ -56,7 +50,6 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
           closeDrawer={this.closeDrawer}
           navigateTo={this.navigateTo}
           drawerOpen={this.state.drawerOpen}
-          profile={this.state.profile}
         />
         <div
           className={`${this.props.selectedMenuTitle.toLowerCase()}-root`}
@@ -65,10 +58,7 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
             path="/"
             exact
             render={(props) =>
-              <Dashboard
-                {...props}
-                signedInChanged={this.signedInChanged}
-              />}
+              <Dashboard {...props} />}
           />
           <Route
             path="/charts"

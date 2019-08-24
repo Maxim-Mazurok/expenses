@@ -15,15 +15,21 @@ import List, {
   ListItemText,
 } from '@material/react-list';
 import '@material/react-list/dist/list.css';
-import { selectMenu } from '../../actions';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { connect } from 'react-redux';
-import { getSelectedMenuIndex, Menu, MenuItem } from '../../selectors';
+import {
+  getProfile,
+  getSelectedMenuIndex,
+  Menu,
+  MenuItem,
+} from '../../selectors';
 import GlobalState from '../../types/GlobalState';
+import { selectMenu } from '../../actions/selectMenu';
 
 const mapStateToProps = (state: GlobalState) => ({
   selectedMenuIndex: getSelectedMenuIndex(state),
+  profile: getProfile(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
@@ -39,13 +45,10 @@ type HamburgerProps = ReturnType<typeof mapStateToProps> &
   drawerOpen?: boolean
   closeDrawer: () => void
   navigateTo: (url: string) => void
-  profile?: gapi.auth2.BasicProfile | null
 };
 
-type HamburgerState = ReturnType<typeof mapStateToProps>
-
-class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, HamburgerState> {
-  render(): React.ReactElement<HamburgerProps, React.JSXElementConstructor<HamburgerState>> {
+class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps> {
+  render() {
     const menu = Menu.map((menuItem: MenuItem) =>
       <ListItem
         key={menuItem.text}

@@ -27,7 +27,6 @@ interface State {
   processing: boolean;
   currentMonth?: string;
   previousMonth?: string;
-  expense: Expense | null;
   showExpenseForm: boolean;
 }
 
@@ -199,7 +198,6 @@ class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
         <OperationForm
           categories={this.state.categories}
           accounts={this.state.accounts}
-          expense={this.state.expense}
           onSubmit={this.handleExpenseSubmit}
           onCancel={this.handleExpenseCancel}
           onDelete={this.handleExpenseDelete}

@@ -1,6 +1,6 @@
-import { SelectMenuAction } from "./selectMenuAction";
+import { SelectMenuAction } from './selectMenuAction';
 import { action } from 'typesafe-actions';
-import { SelectedMenuIndex } from "../types/GlobalState";
+import { SelectedMenuIndex } from '../types/GlobalState';
 
 export const SELECT_MENU = 'selectMenuAction';
 

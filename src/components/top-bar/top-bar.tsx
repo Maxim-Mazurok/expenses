@@ -1,12 +1,17 @@
-import React, { Component } from "react";
-import MaterialIcon from "@material/react-material-icon";
+import React, { Component } from 'react';
+import MaterialIcon from '@material/react-material-icon';
 
-import TopAppBar, { TopAppBarIcon, TopAppBarRow, TopAppBarSection, TopAppBarTitle } from "@material/react-top-app-bar";
+import TopAppBar, {
+  TopAppBarIcon,
+  TopAppBarRow,
+  TopAppBarSection,
+  TopAppBarTitle,
+} from '@material/react-top-app-bar';
 import '@material/react-top-app-bar/dist/top-app-bar.css';
-import { RouteComponentProps, withRouter } from "react-router";
-import GlobalState, { SelectedMenuIndex } from "../../types/GlobalState";
-import { connect } from "react-redux";
-import { getSelectedMenuIndex, getSelectedMenuTitle } from "../../selectors";
+import { RouteComponentProps, withRouter } from 'react-router';
+import GlobalState, { SelectedMenuIndex } from '../../types/GlobalState';
+import { connect } from 'react-redux';
+import { getSelectedMenuIndex, getSelectedMenuTitle } from '../../selectors';
 
 
 const mapStateToProps = (state: GlobalState) => ({

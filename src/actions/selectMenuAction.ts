@@ -1,5 +1,5 @@
-import { SELECT_MENU } from "./index";
-import { SelectedMenuIndex } from "../types/GlobalState";
+import { SELECT_MENU } from './index';
+import { SelectedMenuIndex } from '../types/GlobalState';
 
 export const selectMenuAction = (index: SelectedMenuIndex): SelectMenuAction => ({
   type: SELECT_MENU,

@@ -15,11 +15,7 @@ const mapStateToProps = (state: GlobalState) => ({
   selectedMenuTitle: getSelectedMenuTitle(state),
 });
 
-type MainProps = ReturnType<typeof mapStateToProps> & {
-  openDrawer: () => void
-  closeDrawer: () => void
-  navigateTo: () => void
-}
+type MainProps = ReturnType<typeof mapStateToProps> & {}
 
 export interface MainState {
   snackbarMessage: string,

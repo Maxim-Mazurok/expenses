@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import '@material/list/dist/mdc.list.css';
-import './OperationsList.css';
-import OperationDetails from './OperationDetails';
+import './TransactionsList.css';
+import TransactionDetails from './TransactionDetails';
 import GlobalState from '../../types/GlobalState';
 import { getExpenses } from '../../selectors';
 import { connect } from 'react-redux';
+import { Transaction } from '../../types/Expense';
 
 const mapStateToProps = (state: GlobalState) => ({
   expenses: getExpenses(state),
@@ -13,15 +14,15 @@ const mapStateToProps = (state: GlobalState) => ({
 type Props =
   ReturnType<typeof mapStateToProps> &
   {
-    onSelect: (expense: Expense) => void
+    onSelect: (expense: Transaction) => void
   }
 
-class OperationsList extends Component<Props> {
+class TransactionsList extends Component<Props> {
   render() {
     return (
       <ul className="mdc-list mdc-list--two-line mdc-list--avatar-list">
         {this.props.expenses.slice(0, 30).map(expense =>
-          <OperationDetails
+          <TransactionDetails
             key={expense.id}
             expense={expense}
             onSelect={this.props.onSelect}
@@ -32,4 +33,4 @@ class OperationsList extends Component<Props> {
   }
 }
 
-export default connect(mapStateToProps)(OperationsList);
+export default connect(mapStateToProps)(TransactionsList);

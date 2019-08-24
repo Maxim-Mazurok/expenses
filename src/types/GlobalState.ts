@@ -1,12 +1,17 @@
-import BasicProfile = gapi.auth2.BasicProfile;
+import { Transaction } from './Expense';
 
 export type SelectedMenuIndex = number;
 export type ClientId = string;
 export type SpreadSheetId = string;
 export type GapiReady = boolean;
-export type Profile = BasicProfile | undefined;
+export type Profile = gapi.auth2.BasicProfile | undefined;
 export type Account = string;
 export type Category = string;
+
+export enum TransactionType {
+  EXPENSE,
+  INCOME
+}
 
 export default interface GlobalState {
   menu: {
@@ -19,10 +24,11 @@ export default interface GlobalState {
   },
   misc: {
     readonly isGapiReady: GapiReady,
+    readonly newTransactionType: TransactionType,
   },
   data: {
-    expenses: Expense[],
-    categories: Category[],
-    accounts: Account[],
+    readonly expenses: Transaction[],
+    readonly categories: Category[],
+    readonly accounts: Account[],
   }
 }

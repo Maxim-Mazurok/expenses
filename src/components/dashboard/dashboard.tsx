@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import './dashboard.scss';
 
-import { OperationForm, OperationsList } from '../index';
+import { TransactionForm, TransactionsList } from '../index';
 import '@material/react-top-app-bar/dist/top-app-bar.css';
 
 import MaterialIcon from '@material/react-material-icon';
@@ -20,9 +20,12 @@ import '@material/react-button/dist/button.css';
 
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import GlobalState from '../../types/GlobalState';
+import GlobalState, { TransactionType } from '../../types/GlobalState';
 import { getProfile, getSpreadSheetId, isGapiReady } from '../../selectors';
 import { TopAppBarFixedAdjust } from '@material/react-top-app-bar';
+import { Transaction } from '../../types/Expense';
+import { AnyAction, bindActionCreators, Dispatch } from 'redux';
+import { setNewTransactionType } from '../../actions/setNewTransactionType';
 
 const mapStateToProps = (state: GlobalState) => ({
   spreadSheetId: getSpreadSheetId(state),
@@ -30,27 +33,30 @@ const mapStateToProps = (state: GlobalState) => ({
   profile: getProfile(state),
 });
 
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
+  bindActionCreators(
+    {
+      setNewTransactionType,
+    },
+    dispatch,
+  );
+
 interface State {
-  expenses: Expense[];
-  accounts: string[];
-  categories: string[];
-  processing: boolean;
+  expenses: Transaction[];
   currentMonth?: string;
   previousMonth?: string;
-  showExpenseForm: boolean;
+  showTransactionForm: boolean;
 }
 
-type Props = ReturnType<typeof mapStateToProps>
+type Props =
+  & ReturnType<typeof mapStateToProps>
+  & ReturnType<typeof mapDispatchToProps>
   & {}
 
 class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
-  state = {
+  state: State = {
     expenses: [],
-    processing: false,
-    categories: [],
-    accounts: [],
-    expense: null,
-    showExpenseForm: false,
+    showTransactionForm: false,
   };
 
   render() {
@@ -72,55 +78,62 @@ class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
           </div>}
           {this.props.profile &&
           <div>
-            {this.renderExpenses()}
+            {this.renderTransactions()}
           </div>}
         </TopAppBarFixedAdjust>
       </React.Fragment>
     );
   }
 
-  handleExpenseSubmit = () => {
+  handleTransactionSubmit = () => {
     // TODO:
   };
-  handleExpenseCancel = () => {
+  handleTransactionCancel = () => {
+    // TODO: move to TransactionForm and prompt for confirmation if fields are dirty, or just save data (or even better - do both
+    this.setState({ showTransactionForm: false });
+  };
+  handleTransactionDelete = () => {
     // TODO:
   };
-  handleExpenseDelete = () => {
+  handleTransactionChange = () => {
     // TODO:
   };
-  handleExpenseChange = () => {
+  handleTransactionSelect = () => {
     // TODO:
   };
-  handleExpenseSelect = () => {
-    // TODO:
-  };
-  onExpenseNew = () => {
-    // TODO:
+  onNewTransaction = (type: TransactionType) => {
+    // TODO: add URL handling (like, /new or something)
+    this.setState({ showTransactionForm: true });
+    this.props.setNewTransactionType(type);
   };
 
-  renderExpenses() {
-    if (this.state.showExpenseForm)
+  renderTransactions() {
+    if (this.state.showTransactionForm)
       return (
-        <OperationForm
-          categories={this.state.categories}
-          accounts={this.state.accounts}
-          onSubmit={this.handleExpenseSubmit}
-          onCancel={this.handleExpenseCancel}
-          onDelete={this.handleExpenseDelete}
-          onChange={this.handleExpenseChange}
+        <TransactionForm
+          onSubmit={this.handleTransactionSubmit}
+          onCancel={this.handleTransactionCancel}
+          onDelete={this.handleTransactionDelete}
+          onChange={this.handleTransactionChange}
         />
       );
     else {
       return (
         <div>
-          <OperationsList
-            onSelect={this.handleExpenseSelect}
+          <TransactionsList
+            onSelect={this.handleTransactionSelect}
           />
           <Fab
-            onClick={() => this.onExpenseNew()}
-            className="add-transaction-fab--fixed"
-            aria-label="Add expense"
+            onClick={() => this.onNewTransaction(TransactionType.INCOME)}
+            className="add-transaction-fab--fixed income"
+            aria-label="Add income"
             icon={<MaterialIcon icon="add" />}
+          />
+          <Fab
+            onClick={() => this.onNewTransaction(TransactionType.EXPENSE)}
+            className="add-transaction-fab--fixed expense"
+            aria-label="Add expense"
+            icon={<MaterialIcon icon="remove" />}
           />
         </div>
       );
@@ -128,4 +141,4 @@ class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(Dashboard));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Dashboard));

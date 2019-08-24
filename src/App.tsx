@@ -37,7 +37,6 @@ interface State {
   accounts: string[],
   categories: string[],
   processing: boolean,
-  expense: Expense,
   showExpenseForm: boolean,
   snackbarMessage: string,
   snackbarOpen: boolean,
@@ -48,18 +47,10 @@ interface State {
 }
 
 class App extends Component<Props, State> {
-  state = {
+  state: State = {
     accounts: [],
     categories: [],
     processing: true,
-    expense: {
-      id: '',
-      date: '',
-      description: '',
-      category: '',
-      amount: '',
-      account: '',
-    },
     showExpenseForm: false,
     snackbarMessage: '',
     snackbarOpen: false,
@@ -68,19 +59,6 @@ class App extends Component<Props, State> {
     topAppBarTitle: '',
     isGapiReady: false,
   };
-
-  static formatExpense(expense: Expense) {
-    return [
-      `=DATE(${expense.date.substr(0, 4)}, ${expense.date.substr(
-        5,
-        2,
-      )}, ${expense.date.substr(-2)})`,
-      expense.description,
-      expense.account,
-      expense.category,
-      expense.amount,
-    ];
-  }
 
   loadGAPI = (): Promise<void> => {
     const script = document.createElement('script');
@@ -189,14 +167,14 @@ class App extends Component<Props, State> {
 
   /*
   handleExpenseSubmit = () => {
-    this.setState({ processing: true, showExpenseForm: false });
+    this.setState({ processing: true, showTransactionForm: false });
     const submitAction = (this.state.expense.id
       ? this.update
       : this.append).bind(this);
     submitAction(this.state.expense).then(
       () => {
         this.setState({
-          snackbarMessage: `Expense ${this.state.expense.id ? 'updated' : 'added'}!`,
+          snackbarMessage: `Transaction ${this.state.expense.id ? 'updated' : 'added'}!`,
           snackbarOpen: true,
         });
         // dashboard.load();
@@ -216,7 +194,7 @@ class App extends Component<Props, State> {
   };
 
   handleExpenseDelete = (expense) => {
-    this.setState({ processing: true, showExpenseForm: false });
+    this.setState({ processing: true, showTransactionForm: false });
     const expenseRow = expense.id.substring(10);
     window.gapi.client.sheets.spreadsheets
       .batchUpdate({
@@ -238,7 +216,7 @@ class App extends Component<Props, State> {
       })
       .then(
         () => {
-          this.snackbar.labelText = 'Operation deleted!';
+          this.snackbar.labelText = 'Transaction deleted!';
           this.snackbar.open();
           this.load();
         },
@@ -251,17 +229,17 @@ class App extends Component<Props, State> {
   };
 
   handleExpenseSelect = (expense) => {
-    this.setState({ expense: expense, showExpenseForm: true });
+    this.setState({ expense: expense, showTransactionForm: true });
   };
 
   handleExpenseCancel = () => {
-    this.setState({ showExpenseForm: false });
+    this.setState({ showTransactionForm: false });
   };
 
   onExpenseNew() {
     const now = new Date();
     this.setState({
-      showExpenseForm: true,
+      showTransactionForm: true,
       expense: {
         amount: '',
         description: '',

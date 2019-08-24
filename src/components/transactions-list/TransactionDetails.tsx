@@ -1,31 +1,26 @@
 import React, { Component } from 'react';
-import OperationIcon from './OperationIcon';
+import TransactionIcon from './TransactionIcon';
 import { ListItem } from '@material/react-list';
+import { formatDateToUI } from '../../helpers';
+import { Transaction } from '../../types/Expense';
 
 interface Props {
-  onSelect: (expense: Expense) => void,
-  expense: Expense,
+  onSelect: (expense: Transaction) => void,
+  expense: Transaction,
 }
 
-export default class OperationDetails extends Component<Props> {
-  static formatDate(date: string): string {
-    const dateParts = date.split('-');
-    return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-  }
-
+export default class TransactionDetails extends Component<Props> {
   render() {
     return (
       <ListItem
         onClick={() => this.props.onSelect(this.props.expense)}
       >
-        <OperationIcon category={this.props.expense.category} />
+        <TransactionIcon category={this.props.expense.category} />
         <span className="mdc-list-item__text">
           {this.props.expense.category}
           <span className="mdc-list-item__text__secondary">
-            {OperationDetails.formatDate(this.props.expense.date)}
-            {this.props.expense.description
-              ? ` ${this.props.expense.description.replace(/^(.{14}).+/, '$1…')}`
-              : ''}
+            {formatDateToUI(this.props.expense.date)}
+            {this.props.expense.description}
           </span>
         </span>
         <span className="mdc-list-item__end-detail">

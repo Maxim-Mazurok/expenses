@@ -1,5 +1,5 @@
 import { combineReducers, createStore, Reducer } from 'redux';
-import GlobalState from './types/GlobalState';
+import GlobalState, { TransactionType } from './types/GlobalState';
 import { Actions } from './actions';
 import { devToolsEnhancer } from 'redux-devtools-extension';
 import { Menu } from './selectors';
@@ -19,6 +19,7 @@ export const defaultState: GlobalState = {
   },
   misc: {
     isGapiReady: false,
+    newTransactionType: TransactionType.EXPENSE,
   },
   data: {
     accounts: [],

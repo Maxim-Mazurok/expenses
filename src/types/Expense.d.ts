@@ -1,8 +1,14 @@
-interface Expense {
+import { TransactionType } from './GlobalState';
+
+type Transaction = {
   id: string
-  date: string
+} & NewTransaction
+
+interface NewTransaction {
+  type: TransactionType
+  date: Date
   description: string
   category: string
-  amount: string
+  amount: number
   account: string
 }

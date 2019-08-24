@@ -1,4 +1,7 @@
-export const iconFromCategory = (category: Expense['category']): string => {
+import { Transaction } from './types/Expense';
+import { TransactionType } from './types/GlobalState';
+
+export const iconFromCategory = (category: Transaction['category']): string => {
   switch (category) {
     case 'Groceries':
       return 'local_grocery_store';
@@ -27,11 +30,33 @@ export const iconFromCategory = (category: Expense['category']): string => {
   }
 };
 
-export const parseExpense = (value: string[], index: number): Expense => ({
-  id: `Expenses!A${index + 2}`,
-  date: value[0],
-  description: value[1],
-  category: value[3],
-  amount: value[4].replace(',', ''),
-  account: value[2],
-});
+export const parseExpense = (value: string[], index: number): Transaction => {
+  const amount = parseFloat(value[4].replace(',', ''));
+  return {
+    type: amount < 0 ? TransactionType.EXPENSE : TransactionType.INCOME, // TODO: get this from table
+    id: `Expenses!A${index + 2}`,
+    date: new Date(value[0]),
+    description: value[1],
+    category: value[3],
+    amount,
+    account: value[2],
+  };
+};
+
+export const formatExpense = (expense: Transaction) => ([
+  `=DATE(${expense.date.getFullYear()}, ${expense.date.getMonth() + 1}, ${expense.date.getDate()})`,
+  expense.description,
+  expense.account,
+  expense.category,
+  expense.amount,
+]);
+
+export const formatDateToHTML = (date: Date = new Date()): string =>
+  `${date.getFullYear()}-${date.getMonth() < 9
+    ? '0' + (date.getMonth() + 1)
+    : date.getMonth() + 1}-${date.getDate() < 10
+    ? '0' + date.getDate()
+    : date.getDate()}`;
+
+export const formatDateToUI = (date: Date): string =>
+  `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;

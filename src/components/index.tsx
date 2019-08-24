@@ -1,7 +1,7 @@
-import OperationsList from './operations-list/OperationsList';
-import OperationForm from './operation-form/OperationForm';
+import TransactionsList from './transactions-list/TransactionsList';
+import TransactionForm from './transaction-form/TransactionForm';
 
 export {
-  OperationsList,
-  OperationForm,
+  TransactionsList,
+  TransactionForm,
 };

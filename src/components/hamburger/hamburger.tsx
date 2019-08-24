@@ -1,17 +1,26 @@
-import React, { Component } from "react";
-import MaterialIcon from "@material/react-material-icon";
+import React, { Component } from 'react';
+import MaterialIcon from '@material/react-material-icon';
 
-import Drawer, { DrawerContent, DrawerHeader, DrawerSubtitle, DrawerTitle } from "@material/react-drawer";
-import "@material/react-drawer/dist/drawer.css";
+import Drawer, {
+  DrawerContent,
+  DrawerHeader,
+  DrawerSubtitle,
+  DrawerTitle,
+} from '@material/react-drawer';
+import '@material/react-drawer/dist/drawer.css';
 
-import List, { ListItem, ListItemGraphic, ListItemText } from "@material/react-list";
+import List, {
+  ListItem,
+  ListItemGraphic,
+  ListItemText,
+} from '@material/react-list';
 import '@material/react-list/dist/list.css';
-import GlobalState from "../../types/GlobalState";
-import { selectMenu } from "../../actions";
-import { AnyAction, bindActionCreators, Dispatch } from "redux";
-import { RouteComponentProps, withRouter } from "react-router";
-import { connect } from "react-redux";
-import { getSelectedMenuIndex, Menu, MenuItem } from "../../selectors";
+import { selectMenu } from '../../actions';
+import { AnyAction, bindActionCreators, Dispatch } from 'redux';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { connect } from 'react-redux';
+import { getSelectedMenuIndex, Menu, MenuItem } from '../../selectors';
+import GlobalState from '../../types/GlobalState';
 
 const mapStateToProps = (state: GlobalState) => ({
   selectedMenuIndex: getSelectedMenuIndex(state),
@@ -22,7 +31,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
     {
       selectMenu,
     },
-    dispatch
+    dispatch,
   );
 
 type HamburgerProps = ReturnType<typeof mapStateToProps> &
@@ -43,22 +52,24 @@ class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, Hamb
       >
         <ListItemGraphic graphic={<MaterialIcon icon={menuItem.icon} />} />
         <ListItemText primaryText={menuItem.text} />
-      </ListItem>
+      </ListItem>,
     );
 
     return <Drawer
       modal
       open={this.props.drawerOpen || false}
-      onClose={this.closeDrawer}
+      onClose={this.props.closeDrawer}
     >
+      {this.props.profile &&
       <DrawerHeader>
         <DrawerTitle>
-          {this.props.profile ? this.props.profile.getName() : ''}
+          {this.props.profile.getName()}
         </DrawerTitle>
         <DrawerSubtitle>
-          {this.props.profile ? this.props.profile.getEmail() : ''}
+          {this.props.profile.getEmail()}
         </DrawerSubtitle>
       </DrawerHeader>
+      }
 
       <DrawerContent>
         <List
@@ -66,8 +77,8 @@ class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, Hamb
           selectedIndex={this.props.selectedMenuIndex || 0}
           handleSelect={(menuIndex) => {
             this.props.selectMenu(menuIndex);
-            this.navigateTo(Menu[menuIndex].url);
-            this.closeDrawer();
+            this.props.navigateTo(Menu[menuIndex].url);
+            this.props.closeDrawer();
           }}
         >
           {menu}
@@ -75,25 +86,9 @@ class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps, Hamb
       </DrawerContent>
     </Drawer>;
   }
-
-  private closeDrawer = () => {
-    if (typeof this.props.closeDrawer === 'function') {
-      this.props.closeDrawer();
-    } else {
-      console.warn('closeDrawer is not a function');
-    }
-  };
-
-  private navigateTo = (url: string = '/') => {
-    if (typeof this.props.navigateTo === 'function') {
-      this.props.navigateTo(url);
-    } else {
-      console.warn('navigateTo is not a function');
-    }
-  };
 }
 
 export const HamburgerConnected = withRouter(connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Hamburger));

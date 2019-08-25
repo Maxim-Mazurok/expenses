@@ -91,12 +91,8 @@ class App extends Component<Props, State> {
   };
 
   signedInChanged = (signedIn: boolean) => {
-    console.log('signedInChanged', signedIn);
-    if (signedIn) {
-      this.props.setProfile(gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile());
-    } else {
-      this.props.setProfile(undefined);
-    }
+    const profile = signedIn ? gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile() : undefined;
+    this.props.setProfile(profile);
   };
 
   initClient = (): Promise<void> => {

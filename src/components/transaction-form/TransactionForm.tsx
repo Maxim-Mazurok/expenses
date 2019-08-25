@@ -301,19 +301,21 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
             />
           </MuiPickersUtilsProvider>
 
-          <div className="mdc-form-field">
-            <select
-              name="account"
-              className="mdc-select"
+          <FormControl
+            fullWidth
+            margin={'normal'}
+          >
+            <Autocomplete
+              handleChange={(account: string) => this.props.setTransaction({
+                ...this.props.transaction,
+                account,
+              })}
+              label={'Account'}
+              placeholder={'Select an account'}
+              suggestions={this.props.accounts}
               value={this.props.transaction.account}
-              onChange={this.handleInputChange}
-              required
-            >
-              {this.props.accounts.map(account =>
-                <option value={account} key={account}>{account}</option>,
-              )}
-            </select>
-          </div>
+            />
+          </FormControl>
         </form>
       </Dialog>
     );

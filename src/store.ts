@@ -23,7 +23,7 @@ export const defaultState: GlobalState = {
     isGapiReady: false,
     transaction: {
       type: TransactionType.EXPENSE,
-      amount: 0,
+      amount: '',
       category: '',
       account: '',
       description: '',

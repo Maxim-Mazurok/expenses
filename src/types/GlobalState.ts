@@ -9,8 +9,9 @@ export type Account = string;
 export type Category = string;
 
 export enum TransactionType {
-  EXPENSE,
-  INCOME
+  EXPENSE = 'EXPENSE',
+  INCOME = 'INCOME',
+  TRANSFER = 'TRANSFER',
 }
 
 export default interface GlobalState {

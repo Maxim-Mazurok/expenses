@@ -47,6 +47,7 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
 - [ ] Load more transactions, as user scrolls (they are already loaded, just show them)
 - [ ] Fix user information not showing up on the pages other then "Dashboard"
 - [ ] Probably, get rid of all `@material/*` deps
+- [ ] Replace `classnames` with `clsx`
 ---
 
 💰Expenses is a 

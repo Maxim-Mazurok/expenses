@@ -9,6 +9,6 @@ interface NewTransaction {
   date: Date
   description: string
   category: string
-  amount: number
+  amount: number | ''
   account: string
 }

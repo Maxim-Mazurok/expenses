@@ -1,14 +1,5 @@
-import React, { ChangeEvent, Component, FormEvent } from 'react';
-import { MDCTextField } from '@material/textfield';
-import { MDCDialog } from '@material/dialog';
+import React, { Component, FormEvent } from 'react';
 
-import '@material/form-field/dist/mdc.form-field.css';
-import '@material/select/dist/mdc.select.css';
-import '@material/textfield/dist/mdc.textfield.css';
-import '@material/button/dist/mdc.button.css';
-import '@material/dialog/dist/mdc.dialog.css';
-
-import './TransactionForm.scss';
 import GlobalState, { TransactionType } from '../../types/GlobalState';
 import { getAccounts, getCategories, getTransaction } from '../../selectors';
 import { NewTransaction, Transaction } from '../../types/Expense';
@@ -19,7 +10,18 @@ import {
   Button,
   createStyles,
   Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
   IconButton,
+  Input,
+  InputLabel,
+  Radio,
+  RadioGroup,
   Theme,
   Toolbar,
   Typography,
@@ -30,6 +32,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { TransactionTypeName } from '../../texts';
 import { formatDateToHTML } from '../../helpers';
 import { connect } from 'react-redux';
+import Autocomplete from '../Automcomplete';
 
 const mapStateToProps = (state: GlobalState) => ({
   categories: getCategories(state),
@@ -54,10 +57,12 @@ type Props =
   & {
   classes: {
     title: string
+    form: string
   }
 }
 
 interface State {
+  showDeleteDialog: boolean;
 }
 
 const styles = (theme: Theme) => {
@@ -66,19 +71,23 @@ const styles = (theme: Theme) => {
       marginLeft: theme.spacing(2),
       flex: 1,
     },
+    form: {
+      margin: theme.spacing(2),
+    },
   });
 };
 
 class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> {
-  private form: HTMLFormElement | null = null;
-  private amountInput: HTMLInputElement | null = null;
-  private dialog: MDCDialog | null = null;
+  state: State = {
+    showDeleteDialog: false,
+  };
 
   get formIsValid(): boolean {
-    return this.props.transaction.amount > 0;
+    // TODO: validate category (or suggest creating new)
+    return this.props.transaction.amount !== null && this.props.transaction.amount > 0;
   }
 
-  handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  handleInputChange = (event: any) => {
     const target = event.target;
 
     this.props.setTransaction({
@@ -87,32 +96,13 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
     });
   };
 
-  componentDidMount() {
-    document.querySelectorAll('.mdc-text-field').forEach(selector => {
-      new MDCTextField(selector);
-    });
-    if (this.props.transaction === undefined && this.amountInput !== null) {
-      this.amountInput.focus();
-    }
-  }
-
   handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     // TODO: this.props.onSubmit();
   };
 
-  initializeDeleteModal = (element: HTMLDivElement) => {
-    if (element) {
-      this.dialog = new MDCDialog(element);
-      this.dialog.listen('MDCDialog:closed', () => {
-        // TODO: Do we still need this? a fix for not closing the modal dialog properly
-        document.body.className = document.body.className.replace(
-          'mdc-dialog-scroll-lock',
-          '',
-        );
-        // TODO: this.props.onDelete(this.props.transaction);
-      });
-    }
+  deleteTransaction = () => {
+    // TODO: implement
   };
 
   render() {
@@ -135,13 +125,15 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
               color="inherit"
               type={'submit'}
               disabled={!this.formIsValid}
+              onClick={() => {/*TODO: save transaction*/
+              }}
             >
               {this.props.transaction.hasOwnProperty('id') ? 'update' : 'add'}
             </Button>
-            {this.props.transaction &&
+            {this.props.transaction.hasOwnProperty('id') &&
             <Button
               color="inherit"
-              onClick={() => this.dialog && this.dialog.open()}
+              onClick={() => this.setState({ showDeleteDialog: true })}
             >
               delete {/*TODO: add icon*/}
             </Button>
@@ -149,76 +141,117 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
           </Toolbar>
         </AppBar>
         <form
+          className={classes.form}
           onSubmit={this.handleSubmit}
-          ref={form => {
-            this.form = form;
-          }}
           noValidate
         >
-          <div className="mdc-dialog"
-               role="alertdialog"
-               aria-modal="true"
-               aria-labelledby="my-dialog-title"
-               aria-describedby="my-dialog-content"
-               ref={this.initializeDeleteModal}
+          <Dialog
+            open={this.state.showDeleteDialog}
+            onClose={() => this.setState({ showDeleteDialog: false })}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
           >
-            <div className="mdc-dialog__container">
-              <div className="mdc-dialog__surface">
-                <h2 className="mdc-dialog__title" id="my-dialog-title">Are you
-                  sure?</h2>
-                <div className="mdc-dialog__content" id="my-dialog-content">
-                  Do you really want to delete the transaction?
-                </div>
-                <footer className="mdc-dialog__actions">
-                  <button type="button"
-                          className="mdc-button mdc-dialog__button"
-                          data-mdc-dialog-action="no">
-                    <span className="mdc-button__label">Cancel</span>
-                  </button>
-                  <button type="button"
-                          className="mdc-button mdc-dialog__button mdc-dialog__button--default"
-                          data-mdc-dialog-action="yes">
-                    <span className="mdc-button__label">Delete</span>
-                  </button>
-                </footer>
-              </div>
-            </div>
-            <div className="mdc-dialog__scrim" />
-          </div>
+            <DialogTitle
+              id="alert-dialog-title"
+            >
+              Do you really want to delete the transaction?
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                You can restore deleted transaction using
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  href="https://support.google.com/docs/answer/190843?co=GENIE.Platform%3DDesktop&hl=en"
+                >
+                  Version history
+                </a>
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={() => this.setState({ showDeleteDialog: false })}
+                autoFocus
+                color="primary"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={this.deleteTransaction}
+                color="primary"
+              >
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
 
-
-          <div className="mdc-form-field">
-            <select
+          {/* TODO: maybe, display type editing only when editing existing transaction */}
+          <FormControl
+            fullWidth
+            margin={'normal'}
+          >
+            <FormLabel>Transaction type</FormLabel>
+            <RadioGroup
               name="type"
-              className="mdc-select"
               value={this.props.transaction.type}
               onChange={this.handleInputChange}
-              required
+              row
             >
-              <option value={TransactionType.INCOME}
-                      key={TransactionType.INCOME}>{TransactionTypeName(TransactionType.INCOME)}</option>
-              <option value={TransactionType.EXPENSE}
-                      key={TransactionType.EXPENSE}>{TransactionTypeName(TransactionType.EXPENSE)}</option>
-            </select>
-          </div>
-          <div className="mdc-form-field">
-            <div className="mdc-text-field">
-              <input
-                name="amount"
-                min={0}
-                className="mdc-text-field__input"
-                ref={el => {
-                  this.amountInput = el;
-                }}
-                value={this.props.transaction.amount}
-                onChange={this.handleInputChange}
-                type="number"
-                step="0.01"
-                required
+              <FormControlLabel
+                value={TransactionType.EXPENSE}
+                control={<Radio />}
+                label={TransactionTypeName(TransactionType.EXPENSE)}
               />
-              <label className="mdc-text-field__label">Amount</label>
-            </div>
-          </div>
+              <FormControlLabel
+                value={TransactionType.INCOME}
+                control={<Radio />}
+                label={TransactionTypeName(TransactionType.INCOME)}
+              />
+              <FormControlLabel
+                value={TransactionType.TRANSFER}
+                control={<Radio />}
+                label={TransactionTypeName(TransactionType.TRANSFER)}
+              />
+            </RadioGroup>
+          </FormControl>
+
+          <FormControl
+            fullWidth
+            margin={'normal'}
+          >
+            <InputLabel htmlFor="amount">
+              Amount
+            </InputLabel>
+            <Input
+              id="amount"
+              autoFocus
+              name="amount"
+              value={this.props.transaction.amount}
+              onChange={this.handleInputChange}
+              type="number"
+              inputProps={{
+                step: 0.01,
+                min: 0,
+              }}
+              required
+            />
+          </FormControl>
+
+          <FormControl
+            fullWidth
+            margin={'normal'}
+          >
+            <Autocomplete
+              handleChange={(category: string) => this.props.setTransaction({
+                ...this.props.transaction,
+                category,
+              })}
+              label={'Category'}
+              placeholder={'Select a category'}
+              suggestions={this.props.categories}
+              value={this.props.transaction.category}
+            />
+          </FormControl>
 
           <div className="mdc-form-field">
             <select

@@ -1,10 +1,6 @@
 import { TransactionType } from './types/GlobalState';
 
 export const TransactionTypeName = (type: TransactionType) => {
-  switch (type) {
-    case TransactionType.EXPENSE:
-      return 'Expense';
-    case TransactionType.INCOME:
-      return 'Income';
-  }
+  const lower = type.toString().toLowerCase();
+  return `${lower.substring(0, 1).toUpperCase()}${lower.substring(1)}`;
 };

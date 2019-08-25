@@ -35,6 +35,7 @@ import { connect } from 'react-redux';
 import Autocomplete from '../Automcomplete';
 import {
   KeyboardDatePicker,
+  MaterialUiPickersDate,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
@@ -91,6 +92,15 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
     // TODO: validate category (or suggest creating new)
     return this.props.transaction.amount !== null && this.props.transaction.amount > 0;
   }
+
+  handleDateChange = (date: MaterialUiPickersDate): void => {
+    if (date) {
+      this.props.setTransaction({
+        ...this.props.transaction,
+        date,
+      });
+    }
+  };
 
   handleInputChange = (event: any) => {
     const target = event.target;
@@ -277,12 +287,14 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
 
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
+              autoOk
               fullWidth
+              name="date"
               margin="normal"
               label="Date"
               format="MM/dd/yyyy"
               value={this.props.transaction.date}
-              onChange={this.handleInputChange}
+              onChange={this.handleDateChange}
               KeyboardButtonProps={{
                 'aria-label': 'date',
               }}

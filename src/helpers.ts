@@ -51,12 +51,5 @@ export const formatExpense = (expense: Transaction) => ([
   expense.amount,
 ]);
 
-export const formatDateToHTML = (date: Date = new Date()): string =>
-  `${date.getFullYear()}-${date.getMonth() < 9
-    ? '0' + (date.getMonth() + 1)
-    : date.getMonth() + 1}-${date.getDate() < 10
-    ? '0' + date.getDate()
-    : date.getDate()}`;
-
 export const formatDateToUI = (date: Date): string =>
   `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;

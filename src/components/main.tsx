@@ -8,12 +8,9 @@ import { Snackbar } from '@material/react-snackbar';
 import Charts from './charts/Charts';
 import { TopBarConnected } from './top-bar/top-bar';
 import { connect } from 'react-redux';
-import GlobalState from '../types/GlobalState';
-import { getSelectedMenuTitle } from '../selectors';
+import { TransactionForm } from './index';
 
-const mapStateToProps = (state: GlobalState) => ({
-  selectedMenuTitle: getSelectedMenuTitle(state),
-});
+const mapStateToProps = () => ({});
 
 type MainProps = ReturnType<typeof mapStateToProps> & {}
 
@@ -51,9 +48,7 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
           navigateTo={this.navigateTo}
           drawerOpen={this.state.drawerOpen}
         />
-        <div
-          className={`${this.props.selectedMenuTitle.toLowerCase()}-root`}
-        >
+        <>
           <Route
             path="/"
             exact
@@ -67,7 +62,11 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
             path="/settings"
             component={Settings}
           />
-        </div>
+          <Route
+            path="/transaction"
+            component={TransactionForm}
+          />
+        </>
         <Snackbar
           message={this.state.snackbarMessage || ''}
         />

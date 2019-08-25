@@ -7,6 +7,7 @@ import { SetCategories } from './setCategories';
 import { SetAccounts } from './setAccounts';
 import { SetExpenses } from './setExpenses';
 import { SetNewTransactionType } from './setNewTransactionType';
+import { SetTransaction } from './setTransaction';
 
 export type MenuActions = SelectMenu
 export type SettingsActions =
@@ -16,6 +17,7 @@ export type SettingsActions =
 export type MiscActions =
   | SetGapiReady
   | SetNewTransactionType
+  | SetTransaction
 export type DataActions =
   | SetCategories
   | SetAccounts

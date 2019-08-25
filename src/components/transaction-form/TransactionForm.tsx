@@ -9,76 +9,96 @@ import '@material/button/dist/mdc.button.css';
 import '@material/dialog/dist/mdc.dialog.css';
 
 import './TransactionForm.scss';
-import { connect } from 'react-redux';
 import GlobalState, { TransactionType } from '../../types/GlobalState';
-import {
-  getAccounts,
-  getCategories,
-  getNewTransactionType,
-} from '../../selectors';
-import { formatDateToHTML } from '../../helpers';
-import { TransactionTypeName } from '../../texts';
+import { getAccounts, getCategories, getTransaction } from '../../selectors';
 import { NewTransaction, Transaction } from '../../types/Expense';
+import { AnyAction, bindActionCreators, Dispatch } from 'redux';
+import { setTransaction } from '../../actions/setTransaction';
+import {
+  AppBar,
+  Button,
+  createStyles,
+  Dialog,
+  IconButton,
+  Theme,
+  Toolbar,
+  Typography,
+  withStyles,
+} from '@material-ui/core';
+import { Close } from '@material-ui/icons';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { TransactionTypeName } from '../../texts';
+import { formatDateToHTML } from '../../helpers';
+import { connect } from 'react-redux';
 
 const mapStateToProps = (state: GlobalState) => ({
   categories: getCategories(state),
   accounts: getAccounts(state),
-  newTransactionType: getNewTransactionType(state),
+  transaction: getTransaction(state),
 });
 
-type Props =
-  ReturnType<typeof mapStateToProps> &
-  {
-    transaction?: Transaction | NewTransaction,
-    onSubmit: (...args: any) => void,
-    onCancel: (...args: any) => void,
-    onDelete: (...args: any) => void,
-    onChange: (...args: any) => void,
-  }
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
+  bindActionCreators(
+    {
+      setTransaction,
+    },
+    dispatch,
+  );
 
-interface State {
-  isValid: boolean,
-  transaction: Transaction | NewTransaction,
+type Props =
+  & ReturnType<typeof mapStateToProps>
+  & ReturnType<typeof mapDispatchToProps>
+  & {
+  transaction?: Transaction | NewTransaction,
+}
+  & {
+  classes: {
+    title: string
+  }
 }
 
-class TransactionForm extends Component<Props, State> {
-  state: State = {
-    isValid: false,
-    transaction: this.props.transaction || {
-      type: this.props.newTransactionType,
-      amount: 0,
-      category: this.props.categories[0], // TODO: make it smart, maybe?
-      account: this.props.accounts[0], // TODO: make it smart, maybe?
-      description: '',
-      date: new Date(),
+interface State {
+}
+
+const styles = (theme: Theme) => {
+  return createStyles({
+    title: {
+      marginLeft: theme.spacing(2),
+      flex: 1,
     },
-  };
+  });
+};
+
+class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> {
   private form: HTMLFormElement | null = null;
   private amountInput: HTMLInputElement | null = null;
   private dialog: MDCDialog | null = null;
 
+  get formIsValid(): boolean {
+    return this.props.transaction.amount > 0;
+  }
+
   handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const target = event.target;
 
-    target.reportValidity();
-    if (this.form !== null) {
-      this.setState({ isValid: this.form.checkValidity() });
-    }
-    this.props.onChange(target.name, target.value);
+    this.props.setTransaction({
+      ...this.props.transaction,
+      [target.name]: target.value,
+    });
   };
 
   componentDidMount() {
     document.querySelectorAll('.mdc-text-field').forEach(selector => {
       new MDCTextField(selector);
     });
-    if (this.state.transaction === undefined && this.amountInput !== null) {
+    if (this.props.transaction === undefined && this.amountInput !== null) {
       this.amountInput.focus();
     }
   }
 
   handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    this.props.onSubmit();
+    // TODO: this.props.onSubmit();
   };
 
   initializeDeleteModal = (element: HTMLDivElement) => {
@@ -90,14 +110,44 @@ class TransactionForm extends Component<Props, State> {
           'mdc-dialog-scroll-lock',
           '',
         );
-        this.props.onDelete(this.state.transaction);
+        // TODO: this.props.onDelete(this.props.transaction);
       });
     }
   };
 
   render() {
+    const { classes } = this.props;
+
     return (
-      <>
+      <Dialog fullScreen open={true}
+              onClose={() => this.props.history.push('/')}>
+        <AppBar style={{ position: 'relative' }}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit"
+                        onClick={() => this.props.history.push('/')}
+                        aria-label="close">
+              <Close />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              {this.props.transaction.hasOwnProperty('id') ? 'Edit' : 'New'}{' transaction'}
+            </Typography>
+            <Button
+              color="inherit"
+              type={'submit'}
+              disabled={!this.formIsValid}
+            >
+              {this.props.transaction.hasOwnProperty('id') ? 'update' : 'add'}
+            </Button>
+            {this.props.transaction &&
+            <Button
+              color="inherit"
+              onClick={() => this.dialog && this.dialog.open()}
+            >
+              delete {/*TODO: add icon*/}
+            </Button>
+            }
+          </Toolbar>
+        </AppBar>
         <form
           onSubmit={this.handleSubmit}
           ref={form => {
@@ -141,7 +191,7 @@ class TransactionForm extends Component<Props, State> {
             <select
               name="type"
               className="mdc-select"
-              value={this.state.transaction.type}
+              value={this.props.transaction.type}
               onChange={this.handleInputChange}
               required
             >
@@ -155,11 +205,12 @@ class TransactionForm extends Component<Props, State> {
             <div className="mdc-text-field">
               <input
                 name="amount"
+                min={0}
                 className="mdc-text-field__input"
                 ref={el => {
                   this.amountInput = el;
                 }}
-                value={this.state.transaction.amount}
+                value={this.props.transaction.amount}
                 onChange={this.handleInputChange}
                 type="number"
                 step="0.01"
@@ -173,7 +224,7 @@ class TransactionForm extends Component<Props, State> {
             <select
               name="category"
               className="mdc-select"
-              value={this.state.transaction.category}
+              value={this.props.transaction.category}
               onChange={this.handleInputChange}
               required
             >
@@ -188,7 +239,7 @@ class TransactionForm extends Component<Props, State> {
               <input
                 name="description"
                 className="mdc-text-field__input"
-                value={this.state.transaction.description}
+                value={this.props.transaction.description}
                 onChange={this.handleInputChange}
                 type="text"
               />
@@ -201,7 +252,7 @@ class TransactionForm extends Component<Props, State> {
               <input
                 name="date"
                 className="mdc-text-field__input"
-                value={formatDateToHTML(this.state.transaction.date)}
+                value={formatDateToHTML(this.props.transaction.date)}
                 onChange={this.handleInputChange}
                 type="date"
                 required
@@ -214,7 +265,7 @@ class TransactionForm extends Component<Props, State> {
             <select
               name="account"
               className="mdc-select"
-              value={this.state.transaction.account}
+              value={this.props.transaction.account}
               onChange={this.handleInputChange}
               required
             >
@@ -223,32 +274,10 @@ class TransactionForm extends Component<Props, State> {
               )}
             </select>
           </div>
-
-          <div className="mdc-form-field mdc-form-submit">
-            <input
-              type="submit"
-              className="mdc-button"
-              value={this.state.transaction.hasOwnProperty('id') ? 'Update' : 'Add'}
-              disabled={!this.state.isValid}
-            />
-            {this.state.transaction &&
-            <input
-              type="button"
-              className="mdc-button"
-              onClick={() => this.dialog && this.dialog.open()}
-              value="Delete"
-            />}
-            <input
-              type="button"
-              className="mdc-button"
-              onClick={() => this.props.onCancel()}
-              value="Close"
-            />
-          </div>
         </form>
-      </>
+      </Dialog>
     );
   }
 }
 
-export default connect(mapStateToProps)(TransactionForm);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(TransactionForm)));

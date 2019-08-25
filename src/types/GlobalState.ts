@@ -1,6 +1,6 @@
-import { Transaction } from './Expense';
+import { NewTransaction, Transaction } from './Expense';
 
-export type SelectedMenuIndex = number;
+export type SelectedMenuIndex = number | null;
 export type ClientId = string;
 export type SpreadSheetId = string;
 export type GapiReady = boolean;
@@ -24,7 +24,7 @@ export default interface GlobalState {
   },
   misc: {
     readonly isGapiReady: GapiReady,
-    readonly newTransactionType: TransactionType,
+    readonly transaction: Transaction | NewTransaction,
   },
   data: {
     readonly expenses: Transaction[],

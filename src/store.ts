@@ -8,9 +8,11 @@ import { SettingsReducer } from './reducers/settings';
 import { MiscReducer } from './reducers/misc';
 import { DataReducer } from './reducers/data';
 
+const initialMenuIndex = Menu.findIndex(menuItem => menuItem.url === window.location.pathname);
+
 export const defaultState: GlobalState = {
   menu: {
-    selectedMenuIndex: Menu.findIndex(menuItem => menuItem.url === window.location.pathname) || 0,
+    selectedMenuIndex: initialMenuIndex === -1 ? null : initialMenuIndex,
   },
   settings: {
     clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID || '',
@@ -19,7 +21,14 @@ export const defaultState: GlobalState = {
   },
   misc: {
     isGapiReady: false,
-    newTransactionType: TransactionType.EXPENSE,
+    transaction: {
+      type: TransactionType.EXPENSE,
+      amount: 0,
+      category: '',
+      account: '',
+      description: '',
+      date: new Date(),
+    },
   },
   data: {
     accounts: [],

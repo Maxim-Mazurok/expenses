@@ -11,12 +11,11 @@ import '@material/react-top-app-bar/dist/top-app-bar.css';
 import { RouteComponentProps, withRouter } from 'react-router';
 import GlobalState, { SelectedMenuIndex } from '../../types/GlobalState';
 import { connect } from 'react-redux';
-import { getSelectedMenuIndex, getSelectedMenuTitle } from '../../selectors';
+import { getSelectedMenuIndex, Menu } from '../../selectors';
 
 
 const mapStateToProps = (state: GlobalState) => ({
   selectedMenuIndex: getSelectedMenuIndex(state),
-  selectedMenuTitle: getSelectedMenuTitle(state),
 });
 
 export type TopBarProps = ReturnType<typeof mapStateToProps> & {
@@ -29,6 +28,11 @@ type TopBarState = {
 }
 
 class TopBar extends Component<RouteComponentProps<{}> & TopBarProps, TopBarState> {
+  get title(): string {
+    const selectedMenuIndex = Menu.findIndex(menuItem => menuItem.url === this.props.location.pathname);
+    return selectedMenuIndex === -1 ? '' : Menu[selectedMenuIndex].text;
+  }
+
   render(): React.ReactElement<TopBarProps, React.JSXElementConstructor<TopBarState>> {
     // noinspection HtmlDeprecatedAttribute
     return <TopAppBar
@@ -48,7 +52,7 @@ class TopBar extends Component<RouteComponentProps<{}> & TopBarProps, TopBarStat
               onClick={this.openDrawer.bind(this)} />
           </TopAppBarIcon>
           <TopAppBarTitle>
-            {this.props.selectedMenuTitle}
+            {this.title}
           </TopAppBarTitle>
         </TopAppBarSection>
       </TopAppBarRow>

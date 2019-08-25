@@ -22,6 +22,7 @@ import {
   InputLabel,
   Radio,
   RadioGroup,
+  TextField,
   Theme,
   Toolbar,
   Typography,
@@ -219,7 +220,9 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
             fullWidth
             margin={'normal'}
           >
-            <InputLabel htmlFor="amount">
+            <InputLabel
+              htmlFor="amount"
+            >
               Amount
             </InputLabel>
             <Input
@@ -234,6 +237,12 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
                 min: 0,
               }}
               required
+              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                if (['-', '+', 'e'].indexOf(event.key) !== -1) {
+                  // also fixes https://material-ui.com/components/text-fields/#shrink
+                  event.preventDefault();
+                }
+              }}
             />
           </FormControl>
 
@@ -253,32 +262,14 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
             />
           </FormControl>
 
-          <div className="mdc-form-field">
-            <select
-              name="category"
-              className="mdc-select"
-              value={this.props.transaction.category}
-              onChange={this.handleInputChange}
-              required
-            >
-              {this.props.categories.map(category =>
-                <option value={category} key={category}>{category}</option>,
-              )}
-            </select>
-          </div>
-
-          <div className="mdc-form-field">
-            <div className="mdc-text-field">
-              <input
-                name="description"
-                className="mdc-text-field__input"
-                value={this.props.transaction.description}
-                onChange={this.handleInputChange}
-                type="text"
-              />
-              <label className="mdc-text-field__label">Description</label>
-            </div>
-          </div>
+          <TextField
+            fullWidth
+            name="description"
+            label="Description"
+            value={this.props.transaction.description}
+            onChange={this.handleInputChange}
+            margin="normal"
+          />
 
           <div className="mdc-form-field">
             <div className="mdc-text-field">

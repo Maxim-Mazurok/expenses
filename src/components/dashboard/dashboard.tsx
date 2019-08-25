@@ -5,12 +5,7 @@ import './dashboard.scss';
 
 import { TransactionForm, TransactionsList } from '../index';
 import '@material/react-top-app-bar/dist/top-app-bar.css';
-
-import MaterialIcon from '@material/react-material-icon';
 import '@material/react-material-icon/dist/material-icon.css';
-
-import { Fab } from '@material/react-fab';
-import '@material/react-fab/dist/fab.css';
 
 import LinearProgress from '@material/react-linear-progress';
 import '@material/react-linear-progress/dist/linear-progress.css';
@@ -26,6 +21,18 @@ import { TopAppBarFixedAdjust } from '@material/react-top-app-bar';
 import { Transaction } from '../../types/Expense';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { setNewTransactionType } from '../../actions/setNewTransactionType';
+import {
+  createStyles,
+  Fab,
+  StyledComponentProps,
+  Theme,
+  withStyles,
+} from '@material-ui/core';
+import * as FabStyles from '@material-ui/core/Fab';
+import { Add, Remove } from '@material-ui/icons';
+import { green, red } from '@material-ui/core/colors';
+
+console.log(FabStyles);
 
 const mapStateToProps = (state: GlobalState) => ({
   spreadSheetId: getSpreadSheetId(state),
@@ -51,7 +58,28 @@ interface State {
 type Props =
   & ReturnType<typeof mapStateToProps>
   & ReturnType<typeof mapDispatchToProps>
-  & {}
+  & StyledComponentProps
+  & {
+  classes: {
+    fab: string
+    fabContainer: string
+  }
+}
+
+const styles = (theme: Theme) => {
+  const fabMargin = theme.spacing(2);
+  return createStyles({
+    fab: {
+      marginRight: fabMargin,
+      marginBottom: fabMargin,
+    },
+    fabContainer: {
+      position: 'fixed',
+      bottom: 0,
+      right: 0,
+    },
+  });
+};
 
 class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
   state: State = {
@@ -108,6 +136,8 @@ class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
   };
 
   renderTransactions() {
+    const { classes } = this.props;
+
     if (this.state.showTransactionForm)
       return (
         <TransactionForm
@@ -123,22 +153,28 @@ class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
           <TransactionsList
             onSelect={this.handleTransactionSelect}
           />
-          <Fab
-            onClick={() => this.onNewTransaction(TransactionType.INCOME)}
-            className="add-transaction-fab--fixed income"
-            aria-label="Add income"
-            icon={<MaterialIcon icon="add" />}
-          />
-          <Fab
-            onClick={() => this.onNewTransaction(TransactionType.EXPENSE)}
-            className="add-transaction-fab--fixed expense"
-            aria-label="Add expense"
-            icon={<MaterialIcon icon="remove" />}
-          />
+          <div className={classes.fabContainer}>
+            <Fab
+              onClick={() => this.onNewTransaction(TransactionType.INCOME)}
+              className={classes.fab}
+              aria-label="Add income"
+              style={{ background: green[600] }}
+            >
+              <Add />
+            </Fab>
+            <Fab
+              onClick={() => this.onNewTransaction(TransactionType.EXPENSE)}
+              className={classes.fab}
+              aria-label="Add expense"
+              style={{ background: red[600] }}
+            >
+              <Remove />
+            </Fab>
+          </div>
         </div>
       );
     }
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Dashboard));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Dashboard)));

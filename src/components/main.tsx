@@ -57,16 +57,15 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
           <Route
             path="/"
             exact
-            render={(props) =>
-              <Dashboard {...props} />}
+            component={Dashboard}
           />
           <Route
             path="/charts"
-            render={(props) => <Charts {...props} />}
+            component={Charts}
           />
           <Route
             path="/settings"
-            render={(props) => <Settings {...props} />}
+            component={Settings}
           />
         </div>
         <Snackbar

@@ -31,9 +31,13 @@ import {
 import { Close } from '@material-ui/icons';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { TransactionTypeName } from '../../texts';
-import { formatDateToHTML } from '../../helpers';
 import { connect } from 'react-redux';
 import Autocomplete from '../Automcomplete';
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 const mapStateToProps = (state: GlobalState) => ({
   categories: getCategories(state),
@@ -271,19 +275,19 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
             margin="normal"
           />
 
-          <div className="mdc-form-field">
-            <div className="mdc-text-field">
-              <input
-                name="date"
-                className="mdc-text-field__input"
-                value={formatDateToHTML(this.props.transaction.date)}
-                onChange={this.handleInputChange}
-                type="date"
-                required
-              />
-              <label className="mdc-text-field__label">Date</label>
-            </div>
-          </div>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <KeyboardDatePicker
+              fullWidth
+              margin="normal"
+              label="Date"
+              format="MM/dd/yyyy"
+              value={this.props.transaction.date}
+              onChange={this.handleInputChange}
+              KeyboardButtonProps={{
+                'aria-label': 'date',
+              }}
+            />
+          </MuiPickersUtilsProvider>
 
           <div className="mdc-form-field">
             <select

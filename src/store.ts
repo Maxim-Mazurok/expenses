@@ -24,7 +24,7 @@ export const defaultState: GlobalState = {
     transaction: {
       type: TransactionType.EXPENSE,
       amount: '',
-      category: '',
+      category: undefined,
       account: '',
       description: '',
       date: new Date(),

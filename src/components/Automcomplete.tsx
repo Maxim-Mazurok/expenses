@@ -20,6 +20,7 @@ import { PlaceholderProps } from 'react-select/src/components/Placeholder';
 import { SingleValueProps } from 'react-select/src/components/SingleValue';
 import { ValueType } from 'react-select/src/types';
 import { Omit } from '@material-ui/types';
+import GlobalState from '../types/GlobalState';
 
 interface OptionType {
   label: string;
@@ -123,6 +124,7 @@ function Menu(props: MenuProps<OptionType>) {
   );
 }
 
+// noinspection JSUnusedGlobalSymbols
 const components = {
   Control,
   Menu,
@@ -134,7 +136,7 @@ const components = {
 };
 
 type Props = {
-    value: string
+    value: GlobalState['misc']['transaction']['category']
     label: string
     placeholder: string
     suggestions: string[]
@@ -216,7 +218,7 @@ class Autocomplete extends Component<Props> {
       value: suggestion,
       label: suggestion,
     }));
-    const value = {
+    const value = this.props.value === undefined ? undefined : {
       value: this.props.value,
       label: this.props.value,
     };

@@ -161,7 +161,7 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
                 You can restore deleted transaction using
                 <a
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   href="https://support.google.com/docs/answer/190843?co=GENIE.Platform%3DDesktop&hl=en"
                 >
                   Version history

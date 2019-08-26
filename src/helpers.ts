@@ -164,7 +164,7 @@ export const parseExpense = (value: string[], index: number): Transaction => {
   const amount = parseFloat(value[4].replace(',', ''));
   return {
     type: amount > 0 ? TransactionType.EXPENSE : TransactionType.INCOME, // TODO: get this from table
-    id: `Expenses!A${index + 2}`,
+    id: `Transactions!A${index + 2}`,
     date: new Date(value[0]),
     description: value[1],
     category: value[3],
@@ -184,13 +184,13 @@ export const formatExpense = (expense: Transaction) => ([
 export const formatDateToUI = (date: Date): string =>
   `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 
-export const getColorFromTransactionType = (transactionType: TransactionType, variant: 50 | 100 = 50): Color[500] => {
+export const colorFromTransactionType = (transactionType: TransactionType): Color[500] => {
   switch (transactionType) {
     case TransactionType.EXPENSE:
-      return red[variant];
+      return red[600];
     case TransactionType.INCOME:
-      return green[variant];
+      return green[600];
     case TransactionType.TRANSFER:
-      return grey[variant];
+      return grey[600];
   }
 };

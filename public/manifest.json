@@ -1,6 +1,6 @@
 {
-    "short_name": "Expenses",
-    "name": "Expense Manager",
+  "short_name": "Transactions",
+  "name": "Transaction Manager",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",

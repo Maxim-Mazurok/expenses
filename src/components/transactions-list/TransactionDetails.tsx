@@ -1,8 +1,8 @@
 import React from 'react';
 import {
   colorFromCategory,
+  colorFromTransactionType,
   formatDateToUI,
-  getColorFromTransactionType,
 } from '../../helpers';
 import { Transaction } from '../../types/Transaction';
 import {
@@ -10,7 +10,6 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  makeStyles,
 } from '@material-ui/core';
 import TransactionIcon from './TransactionIcon';
 
@@ -35,23 +34,11 @@ const primaryText = (transaction: Transaction): string => {
   }
 };
 
-const useStyles = makeStyles({
-  root: (props: Props) => ({
-    backgroundColor: getColorFromTransactionType(props.transaction.type),
-    '&:hover': {
-      backgroundColor: getColorFromTransactionType(props.transaction.type, 100),
-    },
-  }),
-});
-
 export default function TransactionDetails(props: Props) {
-  const classes = useStyles(props);
-
   return (
     <ListItem
       button
       onClick={() => props.onSelect(props.transaction)}
-      className={classes.root}
     >
       <ListItemAvatar>
         <Avatar
@@ -64,6 +51,9 @@ export default function TransactionDetails(props: Props) {
       </ListItemAvatar>
       <ListItemText
         primary={primaryText(props.transaction)}
+        primaryTypographyProps={{
+          style: { color: colorFromTransactionType(props.transaction.type) },
+        }}
         secondary={formatDateToUI(props.transaction.date)}
       />
     </ListItem>

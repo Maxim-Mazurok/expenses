@@ -7,7 +7,7 @@ import GlobalState, {
   SelectedMenuIndex,
   SpreadSheetId,
 } from './types/GlobalState';
-import { NewTransaction, Transaction } from './types/Expense';
+import { NewTransaction, Transaction } from './types/Transaction';
 
 export type MenuItem = {
   url: string,
@@ -43,7 +43,7 @@ export const getProfile = (state: GlobalState): Profile => state.settings.profil
 
 export const getAccounts = (state: GlobalState): Account[] => state.data.accounts;
 export const getCategories = (state: GlobalState): Category[] => state.data.categories;
-export const getExpenses = (state: GlobalState): Transaction[] => state.data.expenses;
+export const getTransactions = (state: GlobalState): Transaction[] => state.data.transactions;
 
 export const isGapiReady = (state: GlobalState): GapiReady => state.misc.isGapiReady;
 export const getTransaction = (state: GlobalState): Transaction | NewTransaction => state.misc.transaction;

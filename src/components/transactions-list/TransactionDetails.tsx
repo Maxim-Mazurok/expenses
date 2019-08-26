@@ -1,32 +1,71 @@
-import React, { Component } from 'react';
+import React from 'react';
+import {
+  colorFromCategory,
+  formatDateToUI,
+  getColorFromTransactionType,
+} from '../../helpers';
+import { Transaction } from '../../types/Transaction';
+import {
+  Avatar,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  makeStyles,
+} from '@material-ui/core';
 import TransactionIcon from './TransactionIcon';
-import { ListItem } from '@material/react-list';
-import { formatDateToUI } from '../../helpers';
-import { Transaction } from '../../types/Expense';
 
 interface Props {
-  onSelect: (expense: Transaction) => void,
-  expense: Transaction,
+  onSelect: (transaction: Transaction) => void,
+  transaction: Transaction,
 }
 
-export default class TransactionDetails extends Component<Props> {
-  render() {
-    return (
-      <ListItem
-        onClick={() => this.props.onSelect(this.props.expense)}
-      >
-        <TransactionIcon category={this.props.expense.category} />
-        <span className="mdc-list-item__text">
-          {this.props.expense.category}
-          <span className="mdc-list-item__text__secondary">
-            {formatDateToUI(this.props.expense.date)}
-            {this.props.expense.description}
-          </span>
-        </span>
-        <span className="mdc-list-item__end-detail">
-          {this.props.expense.account.indexOf('(usd)') === -1 ? '₴' : '$'}{this.props.expense.amount}
-        </span>
-      </ListItem>
-    );
+enum Currency {
+  USD = '$',
+  UAH = 'UAH',
+}
+
+const primaryText = (transaction: Transaction): string => {
+  const currency = transaction.account.indexOf('(usd)') !== -1 ? Currency.USD : Currency.UAH;
+  const amount = transaction.amount.toString().replace(/-/g, '');
+  switch (currency) {
+    case Currency.USD:
+      return `${currency}${amount}`;
+    case Currency.UAH:
+      return `${amount} ${currency}`;
   }
+};
+
+const useStyles = makeStyles({
+  root: (props: Props) => ({
+    backgroundColor: getColorFromTransactionType(props.transaction.type),
+    '&:hover': {
+      backgroundColor: getColorFromTransactionType(props.transaction.type, 100),
+    },
+  }),
+});
+
+export default function TransactionDetails(props: Props) {
+  const classes = useStyles(props);
+
+  return (
+    <ListItem
+      button
+      onClick={() => props.onSelect(props.transaction)}
+      className={classes.root}
+    >
+      <ListItemAvatar>
+        <Avatar
+          style={{ background: colorFromCategory(props.transaction.category) }}
+        >
+          <TransactionIcon
+            category={props.transaction.category}
+          />
+        </Avatar>
+      </ListItemAvatar>
+      <ListItemText
+        primary={primaryText(props.transaction)}
+        secondary={formatDateToUI(props.transaction.date)}
+      />
+    </ListItem>
+  );
 }

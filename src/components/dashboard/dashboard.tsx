@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import GlobalState, { TransactionType } from '../../types/GlobalState';
 import { getProfile, getSpreadSheetId, isGapiReady } from '../../selectors';
 import { TopAppBarFixedAdjust } from '@material/react-top-app-bar';
-import { Transaction } from '../../types/Expense';
+import { Transaction } from '../../types/Transaction';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { setNewTransactionType } from '../../actions/setNewTransactionType';
 import {

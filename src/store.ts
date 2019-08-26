@@ -33,7 +33,7 @@ export const defaultState: GlobalState = {
   data: {
     accounts: [],
     categories: [],
-    expenses: [],
+    transactions: [],
   },
 };
 

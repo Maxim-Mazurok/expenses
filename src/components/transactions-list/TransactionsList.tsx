@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import '@material/list/dist/mdc.list.css';
-import './TransactionsList.css';
 import TransactionDetails from './TransactionDetails';
 import GlobalState from '../../types/GlobalState';
-import { getExpenses } from '../../selectors';
+import { getTransactions } from '../../selectors';
 import { connect } from 'react-redux';
-import { Transaction } from '../../types/Expense';
+import { Transaction } from '../../types/Transaction';
+import List from '@material/react-list';
 
 const mapStateToProps = (state: GlobalState) => ({
-  expenses: getExpenses(state),
+  transactions: getTransactions(state),
 });
 
 type Props =
@@ -20,15 +20,15 @@ type Props =
 class TransactionsList extends Component<Props> {
   render() {
     return (
-      <ul className="mdc-list mdc-list--two-line mdc-list--avatar-list">
-        {this.props.expenses.slice(0, 30).map(expense =>
+      <List>
+        {this.props.transactions.slice(0, 30).map(transaction =>
           <TransactionDetails
-            key={expense.id}
-            expense={expense}
+            key={transaction.id}
+            transaction={transaction}
             onSelect={this.props.onSelect}
           />,
         )}
-      </ul>
+      </List>
     );
   }
 }

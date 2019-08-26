@@ -1,4 +1,4 @@
-import { NewTransaction, Transaction } from '../types/Expense';
+import { NewTransaction, Transaction } from '../types/Transaction';
 
 export const SET_TRANSACTION = 'setTransaction';
 

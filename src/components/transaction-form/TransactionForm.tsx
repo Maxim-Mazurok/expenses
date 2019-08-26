@@ -2,7 +2,7 @@ import React, { Component, FormEvent } from 'react';
 
 import GlobalState, { TransactionType } from '../../types/GlobalState';
 import { getAccounts, getCategories, getTransaction } from '../../selectors';
-import { NewTransaction, Transaction } from '../../types/Expense';
+import { NewTransaction, Transaction } from '../../types/Transaction';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { setTransaction } from '../../actions/setTransaction';
 import {

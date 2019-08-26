@@ -3,7 +3,7 @@ import { DataActions } from '../actions';
 import { defaultState } from '../store';
 import { SET_ACCOUNTS } from '../actions/setAccounts';
 import { SET_CATEGORIES } from '../actions/setCategories';
-import { SET_EXPENSES } from '../actions/setExpenses';
+import { SET_TRANSACTIONS } from '../actions/setTransactions';
 
 export const DataReducer = (state: GlobalState['data'] = defaultState.data, action: DataActions): typeof defaultState.data => {
   switch (action.type) {
@@ -17,10 +17,10 @@ export const DataReducer = (state: GlobalState['data'] = defaultState.data, acti
         ...state,
         categories: action.payload,
       };
-    case SET_EXPENSES:
+    case SET_TRANSACTIONS:
       return {
         ...state,
-        expenses: action.payload,
+        transactions: action.payload,
       };
     default:
       return state;

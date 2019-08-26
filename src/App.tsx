@@ -9,9 +9,10 @@ import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { setProfile } from './actions/setProfile';
 import { setGapiReady } from './actions/setGapiReady';
 import { parseExpense } from './helpers';
-import { setExpenses } from './actions/setExpenses';
+import { setTransactions } from './actions/setTransactions';
 import { setAccounts } from './actions/setAccounts';
 import { setCategories } from './actions/setCategories';
+import { CssBaseline } from '@material-ui/core';
 
 const mapStateToProps = (state: GlobalState) => ({
   clientId: getClientId(state),
@@ -25,7 +26,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
       setGapiReady,
       setCategories,
       setAccounts,
-      setExpenses,
+      setTransactions,
     },
     dispatch,
   );
@@ -122,7 +123,7 @@ class App extends Component<Props, State> {
     if (response.result.valueRanges === undefined
       || response.result.valueRanges[0].values === undefined // accounts
       || response.result.valueRanges[1].values === undefined // categories
-      || response.result.valueRanges[2].values === undefined // expenses
+      || response.result.valueRanges[2].values === undefined // transactions
       || response.result.valueRanges[3].values === undefined // currentMonth
       || response.result.valueRanges[4].values === undefined // previousMonth
     ) {
@@ -137,7 +138,7 @@ class App extends Component<Props, State> {
       (items: string[]) => items[0],
     ));
 
-    this.props.setExpenses(response.result.valueRanges[2].values
+    this.props.setTransactions(response.result.valueRanges[2].values
       .map(parseExpense)
       .reverse(),
     );
@@ -272,7 +273,9 @@ class App extends Component<Props, State> {
   render() {
     return (
       <BrowserRouter>
-        <MainConnected />
+        <CssBaseline>
+          <MainConnected />
+        </CssBaseline>
       </BrowserRouter>
     );
   }

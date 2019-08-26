@@ -1,4 +1,4 @@
-import { NewTransaction, Transaction } from './Expense';
+import { NewTransaction, Transaction } from './Transaction';
 
 export type SelectedMenuIndex = number | null;
 export type ClientId = string;
@@ -28,7 +28,7 @@ export default interface GlobalState {
     readonly transaction: Transaction | NewTransaction,
   },
   data: {
-    readonly expenses: Transaction[],
+    readonly transactions: Transaction[],
     readonly categories: Category[],
     readonly accounts: Account[],
   }

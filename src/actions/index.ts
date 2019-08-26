@@ -5,7 +5,7 @@ import { SetProfile } from './setProfile';
 import { SelectMenu } from './selectMenu';
 import { SetCategories } from './setCategories';
 import { SetAccounts } from './setAccounts';
-import { SetExpenses } from './setExpenses';
+import { SetTransactions } from './setTransactions';
 import { SetNewTransactionType } from './setNewTransactionType';
 import { SetTransaction } from './setTransaction';
 
@@ -21,7 +21,7 @@ export type MiscActions =
 export type DataActions =
   | SetCategories
   | SetAccounts
-  | SetExpenses
+  | SetTransactions
 
 export type Actions =
   & MenuActions

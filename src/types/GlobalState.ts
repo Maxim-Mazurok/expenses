@@ -12,6 +12,7 @@ export enum TransactionType {
   EXPENSE = 'EXPENSE',
   INCOME = 'INCOME',
   TRANSFER = 'TRANSFER',
+  // TODO: // DEPOSIT = 'DEPOSIT',
 }
 
 export default interface GlobalState {

@@ -115,7 +115,7 @@ class App extends Component<Props, State> {
         ranges: [
           'Data!A2:A50',
           'Data!E2:E50',
-          'Transactions!A2:F',
+          'Transactions!A2:O',
           'Current!H1',
           'Previous!H1',
         ],

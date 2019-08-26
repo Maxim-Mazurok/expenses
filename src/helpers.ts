@@ -161,25 +161,34 @@ export const colorFromCategory = (category: Transaction['category']): Color[500]
 };
 
 export const parseExpense = (value: string[], index: number): Transaction => {
-  const amount = parseFloat(value[4].replace(',', ''));
   return {
-    type: amount > 0 ? TransactionType.EXPENSE : TransactionType.INCOME, // TODO: get this from table
     id: `Transactions!A${index + 2}`,
     date: new Date(value[0]),
     description: value[1],
-    category: value[3],
-    amount,
-    account: value[2],
+    fromAccount: value[2],
+    toAccount: value[3],
+    type: value[4] as TransactionType,
+    rate: parseFloat(value[5]) || undefined,
+    category: value[6],
+    amount: parseFloat(value[7]),
+    amountTransferred: parseFloat(value[8]) || undefined,
+    fee: parseFloat(value[9]),
+    taxable: value[10] === 'TRUE',
+    cashbackAccount: value[11],
+    cashbackAmount: parseFloat(value[12]),
+    pointsAccount: value[13],
+    pointsAmount: parseFloat(value[14]),
+    refundAmount: parseFloat(value[15]),
   };
 };
 
-export const formatExpense = (expense: Transaction) => ([
-  `=DATE(${expense.date.getFullYear()}, ${expense.date.getMonth() + 1}, ${expense.date.getDate()})`,
-  expense.description,
-  expense.account,
-  expense.category,
-  expense.amount,
-]);
+// export const formatExpense = (expense: Transaction) => ([
+//   `=DATE(${expense.date.getFullYear()}, ${expense.date.getMonth() + 1}, ${expense.date.getDate()})`,
+//   expense.description,
+//   expense.account,
+//   expense.category,
+//   expense.amount,
+// ]);
 
 export const formatDateToUI = (date: Date): string =>
   `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
@@ -192,5 +201,8 @@ export const colorFromTransactionType = (transactionType: TransactionType): Colo
       return green[600];
     case TransactionType.TRANSFER:
       return grey[600];
+    default:
+      console.error('Unknown transaction type');
+      return yellow[600];
   }
 };

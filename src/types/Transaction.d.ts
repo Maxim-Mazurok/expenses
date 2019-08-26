@@ -1,17 +1,36 @@
 import { TransactionType } from './GlobalState';
 
-type Transaction = {
+interface Transaction {
   id: string
   category: string
-  account: string
+  fromAccount: string
   amount: number
-} & NewTransaction
-
-interface NewTransaction {
+  amountTransferred?: number
+  taxable: boolean
   type: TransactionType
   date: Date
   description: string
-  category: string | undefined
-  account: string | undefined
-  amount: number | ''
+  toAccount: string
+  rate?: number
+  fee: number
+  cashbackAccount: string
+  cashbackAmount: number
+  pointsAccount: string
+  pointsAmount: number
+  refundAmount: number
+}
+
+interface NewTransaction extends Transaction {
+  id?: never
+  description?: string
+  category?: string
+  fromAccount?: string
+  toAccount?: string
+  amount?: number
+  fee?: number
+  cashbackAccount?: string
+  cashbackAmount?: number
+  pointsAccount?: string
+  pointsAmount?: number
+  refundAmount?: number
 }

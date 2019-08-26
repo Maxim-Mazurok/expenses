@@ -24,14 +24,31 @@ enum Currency {
 }
 
 const primaryText = (transaction: Transaction): string => {
-  const currency = transaction.account.indexOf('(usd)') !== -1 ? Currency.USD : Currency.UAH;
-  const amount = transaction.amount.toString().replace(/-/g, '');
-  switch (currency) {
-    case Currency.USD:
-      return `${currency}${amount}`;
-    case Currency.UAH:
-      return `${amount} ${currency}`;
+  const amountWithCurrency = (
+    account: Transaction['fromAccount'] | Transaction['toAccount'],
+    amount: Transaction['amount'],
+  ): string => {
+    const currency = account.indexOf('(usd)') !== -1 ? Currency.USD : Currency.UAH;
+    switch (currency) {
+      case Currency.USD:
+        return `${currency}${amount}`;
+      case Currency.UAH:
+        return `${amount} ${currency}`;
+    }
+  };
+
+  const { fromAccount, toAccount, amount, amountTransferred, rate } = transaction;
+
+  if (toAccount !== '') {
+    if (rate !== undefined) {
+      const convertedAmount = amount * rate;
+      return `${amountWithCurrency(fromAccount, amount)} → ${amountWithCurrency(toAccount, convertedAmount)}`;
+    } else if (amountTransferred !== undefined) {
+      return `${amountWithCurrency(fromAccount, amount)} → ${amountWithCurrency(toAccount, amountTransferred)}`;
+    }
   }
+
+  return amountWithCurrency(fromAccount, amount);
 };
 
 export default function TransactionDetails(props: Props) {

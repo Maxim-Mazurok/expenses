@@ -90,7 +90,7 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
 
   get formIsValid(): boolean {
     // TODO: validate category (or suggest creating new)
-    return this.props.transaction.amount !== null && this.props.transaction.amount > 0;
+    return this.props.transaction.amount !== undefined && this.props.transaction.amount > 0;
   }
 
   handleDateChange = (date: MaterialUiPickersDate): void => {
@@ -308,12 +308,12 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
             <Autocomplete
               handleChange={(account: string) => this.props.setTransaction({
                 ...this.props.transaction,
-                account,
+                toAccount: account,
               })}
               label={'Account'}
               placeholder={'Select an account'}
               suggestions={this.props.accounts}
-              value={this.props.transaction.account}
+              value={this.props.transaction.toAccount}
             />
           </FormControl>
         </form>

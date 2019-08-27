@@ -48,6 +48,7 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
 - [ ] Fix user information not showing up on the pages other then "Dashboard"
 - [ ] Probably, get rid of all `@material/*` deps
 - [ ] Replace `classnames` with `clsx`
+- [ ] Make categories transaction type specific
 ---
 
 💰Expenses is a 

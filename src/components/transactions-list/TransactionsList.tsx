@@ -37,10 +37,7 @@ class TransactionsList extends Component<RouteComponentProps<{}> & Props> {
           <TransactionDetails
             key={transaction.id}
             transaction={transaction}
-            onSelect={() => {
-              // this.props.setTransaction(transaction);
-              this.props.history.push(`/transaction/${transaction.id}`);
-            }}
+            onSelect={() => this.props.history.push(`/transaction/${transaction.id}`)}
           />,
         )}
       </List>

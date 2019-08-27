@@ -1,8 +1,12 @@
 import React, { Component, FormEvent } from 'react';
 
 import GlobalState, { TransactionType } from '../../types/GlobalState';
-import { getAccounts, getCategories, getTransaction } from '../../selectors';
-import { NewTransaction, Transaction } from '../../types/Transaction';
+import {
+  getAccounts,
+  getCategories,
+  getTransaction,
+  getTransactions,
+} from '../../selectors';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { setTransaction } from '../../actions/setTransaction';
 import {
@@ -44,6 +48,7 @@ const mapStateToProps = (state: GlobalState) => ({
   categories: getCategories(state),
   accounts: getAccounts(state),
   transaction: getTransaction(state),
+  transactions: getTransactions(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
@@ -57,9 +62,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 type Props =
   & ReturnType<typeof mapStateToProps>
   & ReturnType<typeof mapDispatchToProps>
-  & {
-  transaction?: Transaction | NewTransaction,
-}
+  & RouteComponentProps<{ id: string }>
   & {
   classes: {
     title: string
@@ -83,7 +86,17 @@ const styles = (theme: Theme) => {
   });
 };
 
-class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> {
+const transactionFromURL = (props: Props): void => {
+  const id = props.match.params.id;
+  if (id !== undefined) {
+    const transaction = props.transactions.find(t => t.id === id);
+    if (transaction !== undefined) {
+      props.setTransaction(transaction);
+    }
+  }
+};
+
+class TransactionForm extends Component<Props, State> {
   state: State = {
     showDeleteDialog: false,
   };
@@ -91,6 +104,16 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
   get formIsValid(): boolean {
     // TODO: validate category (or suggest creating new)
     return this.props.transaction.amount !== undefined && this.props.transaction.amount > 0;
+  }
+
+  componentDidMount() {
+    transactionFromURL(this.props);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.transactions.length !== this.props.transactions.length) {
+      transactionFromURL(this.props);
+    }
   }
 
   handleDateChange = (date: MaterialUiPickersDate): void => {
@@ -174,6 +197,7 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
                 You can restore deleted transaction using
+                {' '}
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
@@ -243,7 +267,7 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
               id="amount"
               autoFocus
               name="amount"
-              value={this.props.transaction.amount}
+              value={this.props.transaction.amount || ''}
               onChange={this.handleInputChange}
               type="number"
               inputProps={{
@@ -280,7 +304,7 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
             fullWidth
             name="description"
             label="Description"
-            value={this.props.transaction.description}
+            value={this.props.transaction.description || ''}
             onChange={this.handleInputChange}
             margin="normal"
           />
@@ -293,7 +317,7 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
               margin="normal"
               label="Date"
               format="MM/dd/yyyy"
-              value={this.props.transaction.date}
+              value={this.props.transaction.date || new Date()}
               onChange={this.handleDateChange}
               KeyboardButtonProps={{
                 'aria-label': 'date',
@@ -308,12 +332,12 @@ class TransactionForm extends Component<RouteComponentProps<{}> & Props, State> 
             <Autocomplete
               handleChange={(account: string) => this.props.setTransaction({
                 ...this.props.transaction,
-                toAccount: account,
+                fromAccount: account,
               })}
               label={'Account'}
               placeholder={'Select an account'}
               suggestions={this.props.accounts}
-              value={this.props.transaction.toAccount}
+              value={this.props.transaction.fromAccount}
             />
           </FormControl>
         </form>

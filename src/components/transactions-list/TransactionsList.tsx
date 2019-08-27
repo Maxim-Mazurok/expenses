@@ -6,18 +6,30 @@ import { getTransactions } from '../../selectors';
 import { connect } from 'react-redux';
 import { Transaction } from '../../types/Transaction';
 import List from '@material/react-list';
+import { setTransaction } from '../../actions/setTransaction';
+import { AnyAction, bindActionCreators, Dispatch } from 'redux';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 const mapStateToProps = (state: GlobalState) => ({
   transactions: getTransactions(state),
 });
 
-type Props =
-  ReturnType<typeof mapStateToProps> &
-  {
-    onSelect: (expense: Transaction) => void
-  }
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
+  bindActionCreators(
+    {
+      setTransaction,
+    },
+    dispatch,
+  );
 
-class TransactionsList extends Component<Props> {
+type Props =
+  & ReturnType<typeof mapStateToProps>
+  & ReturnType<typeof mapDispatchToProps>
+  & {
+  onSelect: (expense: Transaction) => void
+}
+
+class TransactionsList extends Component<RouteComponentProps<{}> & Props> {
   render() {
     return (
       <List>
@@ -25,7 +37,10 @@ class TransactionsList extends Component<Props> {
           <TransactionDetails
             key={transaction.id}
             transaction={transaction}
-            onSelect={this.props.onSelect}
+            onSelect={() => {
+              // this.props.setTransaction(transaction);
+              this.props.history.push(`/transaction/${transaction.id}`);
+            }}
           />,
         )}
       </List>
@@ -33,4 +48,4 @@ class TransactionsList extends Component<Props> {
   }
 }
 
-export default connect(mapStateToProps)(TransactionsList);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(TransactionsList));

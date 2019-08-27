@@ -21,6 +21,8 @@ interface Transaction {
 }
 
 interface NewTransaction extends Transaction {
+  date?: Date
+  taxable?: boolean
   id?: never
   description?: string
   category?: string

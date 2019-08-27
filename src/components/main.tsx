@@ -63,7 +63,7 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
             component={Settings}
           />
           <Route
-            path="/transaction"
+            path="/transaction/:id?"
             component={TransactionForm}
           />
         </>

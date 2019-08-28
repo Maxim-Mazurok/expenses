@@ -28,6 +28,7 @@ import {
 } from '@material-ui/core';
 import { Add, Remove } from '@material-ui/icons';
 import { green, red } from '@material-ui/core/colors';
+import { setTransaction } from '../../actions/setTransaction';
 
 const mapStateToProps = (state: GlobalState) => ({
   spreadSheetId: getSpreadSheetId(state),
@@ -38,6 +39,7 @@ const mapStateToProps = (state: GlobalState) => ({
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
+      setTransaction,
       setNewTransactionType,
     },
     dispatch,
@@ -138,7 +140,7 @@ class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
   onNewTransaction = (type: TransactionType) => {
     // TODO: add URL handling (like, /new or something)
     this.props.history.push('/transaction');
-    this.props.setNewTransactionType(type);
+    this.props.setTransaction({ type });
   };
 }
 

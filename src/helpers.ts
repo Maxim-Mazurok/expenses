@@ -171,7 +171,7 @@ export const parseExpense = (value: string[], index: number): Transaction => {
     rate: parseFloat(value[5]) || undefined,
     category: value[6],
     amount: parseFloat(value[7]),
-    amountTransferred: parseFloat(value[8]) || undefined,
+    amountReceived: parseFloat(value[8]) || undefined,
     fee: parseFloat(value[9]),
     taxable: value[10] === 'TRUE',
     cashbackAccount: value[11],

@@ -12,6 +12,7 @@ import { setTransaction } from '../../actions/setTransaction';
 import {
   AppBar,
   Button,
+  Checkbox,
   createStyles,
   Dialog,
   DialogActions,
@@ -91,6 +92,9 @@ const transactionFromURL = (props: Props): void => {
   if (id !== undefined) {
     const transaction = props.transactions.find(t => t.id === id);
     if (transaction !== undefined) {
+      if (transaction.amountReceived === undefined && transaction.rate !== undefined) {
+        transaction.amountReceived = transaction.rate * transaction.amount;
+      }
       props.setTransaction(transaction);
     }
   }
@@ -127,10 +131,11 @@ class TransactionForm extends Component<Props, State> {
 
   handleInputChange = (event: any) => {
     const target = event.target;
+    const value = target.hasOwnProperty('checked') ? target.checked : target.value;
 
     this.props.setTransaction({
       ...this.props.transaction,
-      [target.name]: target.value,
+      [target.name]: value,
     });
   };
 
@@ -229,7 +234,11 @@ class TransactionForm extends Component<Props, State> {
             fullWidth
             margin={'normal'}
           >
-            <FormLabel>Transaction type</FormLabel>
+            <FormLabel
+              required
+            >
+              Transaction type
+            </FormLabel>
             <RadioGroup
               name="type"
               value={this.props.transaction.type}
@@ -260,12 +269,13 @@ class TransactionForm extends Component<Props, State> {
           >
             <InputLabel
               htmlFor="amount"
+              required
             >
-              Amount
+              {this.props.transaction.type === TransactionType.TRANSFER ? 'Amount Sent' : 'Amount'}
             </InputLabel>
             <Input
               id="amount"
-              autoFocus
+              autoFocus={!this.props.transaction.hasOwnProperty('id')}
               name="amount"
               value={this.props.transaction.amount || ''}
               onChange={this.handleInputChange}
@@ -284,11 +294,82 @@ class TransactionForm extends Component<Props, State> {
             />
           </FormControl>
 
+          {this.props.transaction.type === TransactionType.TRANSFER &&
+          <FormControl
+            fullWidth
+            margin={'normal'}
+          >
+            <InputLabel
+              htmlFor="amountReceived"
+              required
+            >
+              Amount Received
+            </InputLabel>
+            <Input
+              id="amountReceived"
+              name="amountReceived"
+              value={this.props.transaction.amountReceived || ''}
+              onChange={this.handleInputChange}
+              type="number"
+              inputProps={{
+                step: 0.01,
+                min: 0,
+              }}
+              required
+              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                if (['-', '+', 'e'].indexOf(event.key) !== -1) {
+                  // also fixes https://material-ui.com/components/text-fields/#shrink
+                  event.preventDefault();
+                }
+              }}
+            />
+          </FormControl>}
+
+          <FormControl
+            fullWidth
+            margin={'normal'}
+          >
+            <InputLabel
+              htmlFor="fee"
+            >
+              Fee
+            </InputLabel>
+            <Input
+              id="fee"
+              name="fee"
+              value={this.props.transaction.fee || ''}
+              onChange={this.handleInputChange}
+              type="number"
+              inputProps={{
+                step: 0.01,
+                min: 0,
+              }}
+              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                if (['-', '+', 'e'].indexOf(event.key) !== -1) {
+                  // also fixes https://material-ui.com/components/text-fields/#shrink
+                  event.preventDefault();
+                }
+              }}
+            />
+          </FormControl>
+
+          <FormControlLabel
+            name="taxable"
+            control={
+              <Checkbox
+                checked={this.props.transaction.taxable || false}
+                onChange={this.handleInputChange}
+              />
+            }
+            label="Taxable"
+          />
+
           <FormControl
             fullWidth
             margin={'normal'}
           >
             <Autocomplete
+              required
               handleChange={(category: string) => this.props.setTransaction({
                 ...this.props.transaction,
                 category,
@@ -311,6 +392,7 @@ class TransactionForm extends Component<Props, State> {
 
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
+              required
               autoOk
               fullWidth
               name="date"
@@ -330,16 +412,83 @@ class TransactionForm extends Component<Props, State> {
             margin={'normal'}
           >
             <Autocomplete
+              required
               handleChange={(account: string) => this.props.setTransaction({
                 ...this.props.transaction,
                 fromAccount: account,
               })}
-              label={'Account'}
+              label={this.props.transaction.type === TransactionType.TRANSFER ? 'From Account' : 'Account'}
               placeholder={'Select an account'}
               suggestions={this.props.accounts}
               value={this.props.transaction.fromAccount}
             />
           </FormControl>
+
+          {this.props.transaction.type === TransactionType.TRANSFER &&
+          <FormControl
+            fullWidth
+            margin={'normal'}
+          >
+            <Autocomplete
+              required
+              handleChange={(account: string) => this.props.setTransaction({
+                ...this.props.transaction,
+                toAccount: account,
+              })}
+              label={'To Account'}
+              placeholder={'Select an account'}
+              suggestions={this.props.accounts}
+              value={this.props.transaction.toAccount}
+            />
+          </FormControl>}
+
+          <FormControl
+            fullWidth
+            margin={'normal'}
+          >
+            <Autocomplete
+              handleChange={(account: string | undefined) => this.props.setTransaction({
+                ...this.props.transaction,
+                cashbackAccount: account,
+              })}
+              label={'Cashback Account'}
+              placeholder={'Select an account'}
+              suggestions={this.props.accounts}
+              value={this.props.transaction.cashbackAccount}
+            />
+          </FormControl>
+
+          {this.props.transaction.cashbackAccount &&
+          <FormControl
+            fullWidth
+            margin={'normal'}
+          >
+            <InputLabel
+              htmlFor="cashbackAmount"
+              required
+            >
+              Cashback Amount
+            </InputLabel>
+            <Input
+              id="cashbackAmount"
+              autoFocus={!this.props.transaction.hasOwnProperty('id')}
+              name="cashbackAmount"
+              value={this.props.transaction.cashbackAmount || ''}
+              onChange={this.handleInputChange}
+              type="number"
+              inputProps={{
+                step: 0.01,
+                min: 0,
+              }}
+              required
+              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                if (['-', '+', 'e'].indexOf(event.key) !== -1) {
+                  // also fixes https://material-ui.com/components/text-fields/#shrink
+                  event.preventDefault();
+                }
+              }}
+            />
+          </FormControl>}
         </form>
       </Dialog>
     );

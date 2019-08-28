@@ -37,14 +37,14 @@ const primaryText = (transaction: Transaction): string => {
     }
   };
 
-  const { fromAccount, toAccount, amount, amountTransferred, rate } = transaction;
+  const { fromAccount, toAccount, amount, amountReceived, rate } = transaction;
 
   if (toAccount !== '') {
     if (rate !== undefined) {
       const convertedAmount = amount * rate;
       return `${amountWithCurrency(fromAccount, amount)} → ${amountWithCurrency(toAccount, convertedAmount)}`;
-    } else if (amountTransferred !== undefined) {
-      return `${amountWithCurrency(fromAccount, amount)} → ${amountWithCurrency(toAccount, amountTransferred)}`;
+    } else if (amountReceived !== undefined) {
+      return `${amountWithCurrency(fromAccount, amount)} → ${amountWithCurrency(toAccount, amountReceived)}`;
     }
   }
 

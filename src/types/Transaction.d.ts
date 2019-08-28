@@ -5,7 +5,7 @@ interface Transaction {
   category: string
   fromAccount: string
   amount: number
-  amountTransferred?: number
+  amountReceived?: number
   taxable: boolean
   type: TransactionType
   date: Date
@@ -13,7 +13,7 @@ interface Transaction {
   toAccount: string
   rate?: number
   fee: number
-  cashbackAccount: string
+  cashbackAccount: string | undefined
   cashbackAmount: number
   pointsAccount: string
   pointsAmount: number

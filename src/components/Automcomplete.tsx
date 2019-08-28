@@ -22,7 +22,7 @@ import { ValueType } from 'react-select/src/types';
 import { Omit } from '@material-ui/types';
 import GlobalState from '../types/GlobalState';
 
-interface OptionType {
+type OptionType = undefined | {
   label: string;
   value: string;
 }
@@ -140,8 +140,16 @@ type Props = {
     label: string
     placeholder: string
     suggestions: string[]
-    handleChange: (value: string) => void
   }
+  & (
+  {
+    handleChange: (value: string) => void
+    required: true
+  } | {
+  handleChange: (value: string | undefined) => void
+  required?: false
+}
+  )
   & {
   classes: {
     input: string,
@@ -209,11 +217,13 @@ class Autocomplete extends Component<Props> {
   handleChange = (value: ValueType<OptionType>): void => {
     if (value && 'value' in value) {
       this.props.handleChange(value.value);
+    } else if (value === null && !this.props.required) {
+      this.props.handleChange(undefined);
     }
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, label, placeholder } = this.props;
     const suggestions = this.props.suggestions.map(suggestion => ({
       value: suggestion,
       label: suggestion,
@@ -222,10 +232,12 @@ class Autocomplete extends Component<Props> {
       value: this.props.value,
       label: this.props.value,
     };
+    const required = this.props.required || false;
 
     return (
       <NoSsr>
         <Select
+          isClearable={!required}
           classes={classes}
           styles={{
             input: (base: CSSProperties) => ({
@@ -238,13 +250,14 @@ class Autocomplete extends Component<Props> {
           }}
           inputId="react-select-single"
           TextFieldProps={{
-            label: this.props.label,
+            label,
+            required,
             InputLabelProps: {
               htmlFor: 'react-select-single',
               shrink: true,
             },
           }}
-          placeholder={this.props.placeholder}
+          placeholder={placeholder}
           options={suggestions}
           components={components}
           value={value}

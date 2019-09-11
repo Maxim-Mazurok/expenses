@@ -49,6 +49,7 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
 - [ ] Probably, get rid of all `@material/*` deps
 - [ ] Replace `classnames` with `clsx`
 - [ ] Make categories transaction type specific
+- [ ] One transaction can be done from multiple accounts (for example, paying for groceries and using some bonuses to cover part of the expense)
 ---
 
 💰Expenses is a 

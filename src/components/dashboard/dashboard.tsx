@@ -104,9 +104,7 @@ class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
           </div>}
           {this.props.profile &&
           <>
-            <TransactionsList
-              onSelect={this.handleTransactionSelect}
-            />
+            <TransactionsList />
             <div className={classes.fabContainer}>
               <Fab
                 onClick={() => this.onNewTransaction(TransactionType.INCOME)}
@@ -132,10 +130,7 @@ class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
   }
 
   handleTransactionCancel = () => {
-    // TODO: move to TransactionForm and prompt for confirmation if fields are dirty, or just save data (or even better - do both
-  };
-  handleTransactionSelect = () => {
-    // TODO:
+    // TODO: move to TransactionForm and prompt for confirmation if fields are dirty, or just save data (or even better - do both)
   };
   onNewTransaction = (type: TransactionType) => {
     // TODO: add URL handling (like, /new or something)

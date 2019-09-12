@@ -4,7 +4,6 @@ import TransactionDetails from './TransactionDetails';
 import GlobalState from '../../types/GlobalState';
 import { getTransactions } from '../../selectors';
 import { connect } from 'react-redux';
-import { Transaction } from '../../types/Transaction';
 import List from '@material/react-list';
 import { setTransaction } from '../../actions/setTransaction';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
@@ -25,9 +24,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
 type Props =
   & ReturnType<typeof mapStateToProps>
   & ReturnType<typeof mapDispatchToProps>
-  & {
-  onSelect: (expense: Transaction) => void
-}
+  & {}
 
 class TransactionsList extends Component<RouteComponentProps<{}> & Props> {
   render() {

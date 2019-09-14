@@ -4,6 +4,7 @@ import GlobalState, { TransactionType } from '../../types/GlobalState';
 import {
   getAccounts,
   getCategories,
+  getSpreadSheetId,
   getTransaction,
   getTransactions,
 } from '../../selectors';
@@ -15,10 +16,6 @@ import {
   Checkbox,
   createStyles,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -44,12 +41,14 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import DeleteDialog from './DeleteDialog';
 
 const mapStateToProps = (state: GlobalState) => ({
   categories: getCategories(state),
   accounts: getAccounts(state),
   transaction: getTransaction(state),
   transactions: getTransactions(state),
+  spreadSheetId: getSpreadSheetId(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
@@ -144,25 +143,21 @@ class TransactionForm extends Component<Props, State> {
     // TODO: this.props.onSubmit();
   };
 
-  deleteTransaction = () => {
-    // TODO: implement
-  };
-
   render() {
-    const { classes } = this.props;
+    const { classes, transaction, history } = this.props;
 
     return (
       <Dialog fullScreen open={true}
-              onClose={() => this.props.history.push('/')}>
+              onClose={() => history.push('/')}>
         <AppBar style={{ position: 'relative' }}>
           <Toolbar>
             <IconButton edge="start" color="inherit"
-                        onClick={() => this.props.history.push('/')}
+                        onClick={() => history.push('/')}
                         aria-label="close">
               <Close />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              {this.props.transaction.hasOwnProperty('id') ? 'Edit' : 'New'}{' transaction'}
+              {transaction.hasOwnProperty('id') ? 'Edit' : 'New'}{' transaction'}
             </Typography>
             <Button
               color="inherit"
@@ -171,9 +166,9 @@ class TransactionForm extends Component<Props, State> {
               onClick={() => {/*TODO: save transaction*/
               }}
             >
-              {this.props.transaction.hasOwnProperty('id') ? 'update' : 'add'}
+              {transaction.hasOwnProperty('id') ? 'update' : 'add'}
             </Button>
-            {this.props.transaction.hasOwnProperty('id') &&
+            {transaction.hasOwnProperty('id') &&
             <Button
               color="inherit"
               onClick={() => this.setState({ showDeleteDialog: true })}
@@ -188,46 +183,15 @@ class TransactionForm extends Component<Props, State> {
           onSubmit={this.handleSubmit}
           noValidate
         >
-          <Dialog
-            open={this.state.showDeleteDialog}
-            onClose={() => this.setState({ showDeleteDialog: false })}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle
-              id="alert-dialog-title"
-            >
-              Do you really want to delete the transaction?
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                You can restore deleted transaction using
-                {' '}
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://support.google.com/docs/answer/190843?co=GENIE.Platform%3DDesktop&hl=en"
-                >
-                  Version history
-                </a>
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={() => this.setState({ showDeleteDialog: false })}
-                autoFocus
-                color="primary"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={this.deleteTransaction}
-                color="primary"
-              >
-                Delete
-              </Button>
-            </DialogActions>
-          </Dialog>
+          {
+            this.state.showDeleteDialog &&
+            transaction.hasOwnProperty('id') &&
+            transaction.id !== undefined &&
+            <DeleteDialog
+              onClose={() => this.setState({ showDeleteDialog: false })}
+              transaction={transaction}
+            />
+          }
 
           {/* TODO: maybe, display type editing only when editing existing transaction */}
           <FormControl
@@ -241,7 +205,7 @@ class TransactionForm extends Component<Props, State> {
             </FormLabel>
             <RadioGroup
               name="type"
-              value={this.props.transaction.type}
+              value={transaction.type}
               onChange={this.handleInputChange}
               row
             >
@@ -271,13 +235,13 @@ class TransactionForm extends Component<Props, State> {
               htmlFor="amount"
               required
             >
-              {this.props.transaction.type === TransactionType.TRANSFER ? 'Amount Sent' : 'Amount'}
+              {transaction.type === TransactionType.TRANSFER ? 'Amount Sent' : 'Amount'}
             </InputLabel>
             <Input
               id="amount"
-              autoFocus={!this.props.transaction.hasOwnProperty('id')}
+              autoFocus={!transaction.hasOwnProperty('id')}
               name="amount"
-              value={this.props.transaction.amount || ''}
+              value={transaction.amount || ''}
               onChange={this.handleInputChange}
               type="number"
               inputProps={{
@@ -294,7 +258,7 @@ class TransactionForm extends Component<Props, State> {
             />
           </FormControl>
 
-          {this.props.transaction.type === TransactionType.TRANSFER &&
+          {transaction.type === TransactionType.TRANSFER &&
           <FormControl
             fullWidth
             margin={'normal'}
@@ -308,7 +272,7 @@ class TransactionForm extends Component<Props, State> {
             <Input
               id="amountReceived"
               name="amountReceived"
-              value={this.props.transaction.amountReceived || ''}
+              value={transaction.amountReceived || ''}
               onChange={this.handleInputChange}
               type="number"
               inputProps={{
@@ -337,7 +301,7 @@ class TransactionForm extends Component<Props, State> {
             <Input
               id="fee"
               name="fee"
-              value={this.props.transaction.fee || ''}
+              value={transaction.fee || ''}
               onChange={this.handleInputChange}
               type="number"
               inputProps={{
@@ -357,7 +321,7 @@ class TransactionForm extends Component<Props, State> {
             name="taxable"
             control={
               <Checkbox
-                checked={this.props.transaction.taxable || false}
+                checked={transaction.taxable || false}
                 onChange={this.handleInputChange}
               />
             }
@@ -371,13 +335,13 @@ class TransactionForm extends Component<Props, State> {
             <Autocomplete
               required
               handleChange={(category: string) => this.props.setTransaction({
-                ...this.props.transaction,
+                ...transaction,
                 category,
               })}
               label={'Category'}
               placeholder={'Select a category'}
               suggestions={this.props.categories}
-              value={this.props.transaction.category}
+              value={transaction.category}
             />
           </FormControl>
 
@@ -385,7 +349,7 @@ class TransactionForm extends Component<Props, State> {
             fullWidth
             name="description"
             label="Description"
-            value={this.props.transaction.description || ''}
+            value={transaction.description || ''}
             onChange={this.handleInputChange}
             margin="normal"
           />
@@ -399,7 +363,7 @@ class TransactionForm extends Component<Props, State> {
               margin="normal"
               label="Date"
               format="MM/dd/yyyy"
-              value={this.props.transaction.date || new Date()}
+              value={transaction.date || new Date()}
               onChange={this.handleDateChange}
               KeyboardButtonProps={{
                 'aria-label': 'date',
@@ -414,17 +378,17 @@ class TransactionForm extends Component<Props, State> {
             <Autocomplete
               required
               handleChange={(account: string) => this.props.setTransaction({
-                ...this.props.transaction,
+                ...transaction,
                 fromAccount: account,
               })}
-              label={this.props.transaction.type === TransactionType.TRANSFER ? 'From Account' : 'Account'}
+              label={transaction.type === TransactionType.TRANSFER ? 'From Account' : 'Account'}
               placeholder={'Select an account'}
               suggestions={this.props.accounts}
-              value={this.props.transaction.fromAccount}
+              value={transaction.fromAccount}
             />
           </FormControl>
 
-          {this.props.transaction.type === TransactionType.TRANSFER &&
+          {transaction.type === TransactionType.TRANSFER &&
           <FormControl
             fullWidth
             margin={'normal'}
@@ -432,13 +396,13 @@ class TransactionForm extends Component<Props, State> {
             <Autocomplete
               required
               handleChange={(account: string) => this.props.setTransaction({
-                ...this.props.transaction,
+                ...transaction,
                 toAccount: account,
               })}
               label={'To Account'}
               placeholder={'Select an account'}
               suggestions={this.props.accounts}
-              value={this.props.transaction.toAccount}
+              value={transaction.toAccount}
             />
           </FormControl>}
 
@@ -448,17 +412,17 @@ class TransactionForm extends Component<Props, State> {
           >
             <Autocomplete
               handleChange={(account: string | undefined) => this.props.setTransaction({
-                ...this.props.transaction,
+                ...transaction,
                 cashbackAccount: account,
               })}
               label={'Cashback Account'}
               placeholder={'Select an account'}
               suggestions={this.props.accounts}
-              value={this.props.transaction.cashbackAccount}
+              value={transaction.cashbackAccount}
             />
           </FormControl>
 
-          {this.props.transaction.cashbackAccount &&
+          {transaction.cashbackAccount &&
           <FormControl
             fullWidth
             margin={'normal'}
@@ -471,9 +435,9 @@ class TransactionForm extends Component<Props, State> {
             </InputLabel>
             <Input
               id="cashbackAmount"
-              autoFocus={!this.props.transaction.hasOwnProperty('id')}
+              autoFocus={!transaction.hasOwnProperty('id')}
               name="cashbackAmount"
-              value={this.props.transaction.cashbackAmount || ''}
+              value={transaction.cashbackAmount || ''}
               onChange={this.handleInputChange}
               type="number"
               inputProps={{

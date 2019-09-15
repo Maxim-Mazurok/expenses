@@ -5,6 +5,7 @@ function Charts() {
   return (
     <>
       <h1>Charts will be here</h1>
+      {/*  https://developers.google.com/chart/ */}
     </>
   );
 }

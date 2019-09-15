@@ -36,6 +36,8 @@ type HamburgerProps = ReturnType<typeof mapStateToProps> &
 
 class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps> {
   render() {
+    const { profile } = this.props;
+
     const CollisionLink = React.forwardRef((props: NavLinkProps, ref: React.Ref<HTMLAnchorElement>) => (
       <NavLink innerRef={ref} {...props} />
     ));
@@ -57,36 +59,40 @@ class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps> {
       </ListItem>,
     );
 
-    return <SwipeableDrawer
-      open={this.props.drawerOpen || false}
-      onClose={this.props.closeDrawer}
-      onOpen={this.props.openDrawer}
-    >
-      {this.props.profile &&
-      <>
-        <div style={{ padding: 16 }}>
-          <Avatar
-            style={{
-              width: 60,
-              height: 60,
-            }}
-          />
-          <div style={{ paddingBottom: 16 }} />
-          <Typography variant={'h6'} noWrap>
-            {this.props.profile.getName()}
-          </Typography>
-          <Typography color={'textSecondary'} noWrap gutterBottom>
-            {this.props.profile.getEmail()}
-          </Typography>
-        </div>
-        <Divider />
-      </>
-      }
+    return (
+      <SwipeableDrawer
+        open={this.props.drawerOpen || false}
+        onClose={this.props.closeDrawer}
+        onOpen={this.props.openDrawer}
+      >
+        {profile &&
+        <>
+          <div style={{ padding: 16 }}>
+            <Avatar
+              style={{
+                width: 60,
+                height: 60,
+              }}
+              src={profile.getImageUrl()}
+              alt={profile.getName()}
+            />
+            <div style={{ paddingBottom: 16 }} />
+            <Typography variant={'h6'} noWrap>
+              {profile.getName()}
+            </Typography>
+            <Typography color={'textSecondary'} noWrap gutterBottom>
+              {profile.getEmail()}
+            </Typography>
+          </div>
+          <Divider />
+        </>
+        }
 
-      <List>
-        {menu}
-      </List>
-    </SwipeableDrawer>;
+        <List>
+          {menu}
+        </List>
+      </SwipeableDrawer>
+    );
   }
 }
 

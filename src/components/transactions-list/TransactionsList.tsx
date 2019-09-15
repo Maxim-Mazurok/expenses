@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import '@material/list/dist/mdc.list.css';
 import TransactionDetails from './TransactionDetails';
 import GlobalState from '../../types/GlobalState';
 import { getTransactions } from '../../selectors';
 import { connect } from 'react-redux';
-import List from '@material/react-list';
 import { setTransaction } from '../../actions/setTransaction';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { RouteComponentProps, withRouter } from 'react-router';
+import { List } from '@material-ui/core';
 
 const mapStateToProps = (state: GlobalState) => ({
   transactions: getTransactions(state),

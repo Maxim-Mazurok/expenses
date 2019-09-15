@@ -4,14 +4,19 @@ import GlobalState, {
   ClientId,
   GapiReady,
   Profile,
-  SelectedMenuIndex,
   SpreadSheetId,
 } from './types/GlobalState';
 import { NewTransaction, Transaction } from './types/Transaction';
+import {
+  Dashboard,
+  PieChart,
+  Settings,
+  SvgIconComponent,
+} from '@material-ui/icons';
 
 export type MenuItem = {
   url: string,
-  icon: string,
+  IconComponent: SvgIconComponent,
   text: string
 }
 
@@ -20,22 +25,20 @@ export type Menu = MenuItem[]
 export const Menu = [
   {
     url: '/',
-    icon: 'dashboard',
+    IconComponent: Dashboard,
     text: 'Dashboard',
   },
   {
     url: '/charts',
-    icon: 'pie_chart',
+    IconComponent: PieChart,
     text: 'Charts',
   },
   {
     url: '/settings',
-    icon: 'settings',
+    IconComponent: Settings,
     text: 'Settings',
   },
 ];
-
-export const getSelectedMenuIndex = (state: GlobalState): SelectedMenuIndex => state.menu.selectedMenuIndex;
 
 export const getClientId = (state: GlobalState): ClientId => state.settings.clientId;
 export const getSpreadSheetId = (state: GlobalState): SpreadSheetId => state.settings.spreadSheetId;

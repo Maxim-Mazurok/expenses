@@ -2,26 +2,18 @@
 import React, { Component } from 'react';
 
 import { TransactionsList } from '../index';
-import '@material/react-top-app-bar/dist/top-app-bar.css';
-import '@material/react-material-icon/dist/material-icon.css';
-
-import LinearProgress from '@material/react-linear-progress';
-import '@material/react-linear-progress/dist/linear-progress.css';
-
-import Button from '@material/react-button';
-import '@material/react-button/dist/button.css';
-
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import GlobalState, { TransactionType } from '../../types/GlobalState';
 import { getProfile, getSpreadSheetId, isGapiReady } from '../../selectors';
-import { TopAppBarFixedAdjust } from '@material/react-top-app-bar';
 import { Transaction } from '../../types/Transaction';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { setNewTransactionType } from '../../actions/setNewTransactionType';
 import {
+  Button,
   createStyles,
   Fab,
+  LinearProgress,
   StyledComponentProps,
   Theme,
   withStyles,
@@ -88,43 +80,41 @@ class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
 
     return (
       <>
-        <TopAppBarFixedAdjust>
-          {!this.props.isGapiReady &&
-          <LinearProgress indeterminate={true} />
-          }
-          {this.props.isGapiReady && this.props.profile === undefined &&
-          <div className="center">
-            <Button
-              onClick={() => {
-                gapi.auth2.getAuthInstance().signIn();
-              }}
+        {!this.props.isGapiReady &&
+        <LinearProgress variant="indeterminate" />
+        }
+        {this.props.isGapiReady && this.props.profile === undefined &&
+        <div className="center">
+          <Button
+            onClick={() => {
+              gapi.auth2.getAuthInstance().signIn();
+            }}
+          >
+            Sign in
+          </Button>
+        </div>}
+        {this.props.profile &&
+        <>
+          <TransactionsList />
+          <div className={classes.fabContainer}>
+            <Fab
+              onClick={() => this.onNewTransaction(TransactionType.INCOME)}
+              className={classes.fab}
+              aria-label="Add income"
+              style={{ background: green[600] }}
             >
-              Sign in
-            </Button>
-          </div>}
-          {this.props.profile &&
-          <>
-            <TransactionsList />
-            <div className={classes.fabContainer}>
-              <Fab
-                onClick={() => this.onNewTransaction(TransactionType.INCOME)}
-                className={classes.fab}
-                aria-label="Add income"
-                style={{ background: green[600] }}
-              >
-                <Add />
-              </Fab>
-              <Fab
-                onClick={() => this.onNewTransaction(TransactionType.EXPENSE)}
-                className={classes.fab}
-                aria-label="Add expense"
-                style={{ background: red[600] }}
-              >
-                <Remove />
-              </Fab>
-            </div>
-          </>}
-        </TopAppBarFixedAdjust>
+              <Add />
+            </Fab>
+            <Fab
+              onClick={() => this.onNewTransaction(TransactionType.EXPENSE)}
+              className={classes.fab}
+              aria-label="Add expense"
+              style={{ background: red[600] }}
+            >
+              <Remove />
+            </Fab>
+          </div>
+        </>}
       </>
     );
   }

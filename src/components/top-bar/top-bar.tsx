@@ -1,31 +1,15 @@
 import React, { Component } from 'react';
-import MaterialIcon from '@material/react-material-icon';
-
-import TopAppBar, {
-  TopAppBarIcon,
-  TopAppBarRow,
-  TopAppBarSection,
-  TopAppBarTitle,
-} from '@material/react-top-app-bar';
-import '@material/react-top-app-bar/dist/top-app-bar.css';
 import { RouteComponentProps, withRouter } from 'react-router';
-import GlobalState, { SelectedMenuIndex } from '../../types/GlobalState';
-import { connect } from 'react-redux';
-import { getSelectedMenuIndex, Menu } from '../../selectors';
+import { Menu } from '../../selectors';
+import { AppBar, IconButton, Toolbar, Typography } from '@material-ui/core';
+import { Menu as MenuIcon } from '@material-ui/icons';
 
 
-const mapStateToProps = (state: GlobalState) => ({
-  selectedMenuIndex: getSelectedMenuIndex(state),
-});
-
-export type TopBarProps = ReturnType<typeof mapStateToProps> & {
+export type TopBarProps = {
   openDrawer: () => void,
-  short?: boolean
 };
 
-type TopBarState = {
-  selectedMenuIndex: SelectedMenuIndex,
-}
+type TopBarState = {}
 
 class TopBar extends Component<RouteComponentProps<{}> & TopBarProps, TopBarState> {
   get title(): string {
@@ -34,40 +18,24 @@ class TopBar extends Component<RouteComponentProps<{}> & TopBarProps, TopBarStat
   }
 
   render(): React.ReactElement<TopBarProps, React.JSXElementConstructor<TopBarState>> {
-    // noinspection HtmlDeprecatedAttribute
-    return <TopAppBar
-      short={this.props.short || true}
-    >
-      <TopAppBarRow>
-        <TopAppBarSection
-          align="start"
-        >
-          <TopAppBarIcon
-            navIcon
-            tabIndex={0}
+    return (
+      <AppBar position="relative">
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={this.props.openDrawer}
           >
-            <MaterialIcon
-              hasRipple
-              icon="menu"
-              onClick={this.openDrawer.bind(this)} />
-          </TopAppBarIcon>
-          <TopAppBarTitle>
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6">
             {this.title}
-          </TopAppBarTitle>
-        </TopAppBarSection>
-      </TopAppBarRow>
-    </TopAppBar>;
+          </Typography>
+        </Toolbar>
+      </AppBar>
+    );
   }
-
-  private openDrawer = () => {
-    if (typeof this.props.openDrawer === 'function') {
-      this.props.openDrawer();
-    } else {
-      console.warn('openDrawer is not a function');
-    }
-  };
 }
 
-export const TopBarConnected = withRouter(connect(
-  mapStateToProps,
-)(TopBar));
+export const TopBarConnected = withRouter(TopBar);

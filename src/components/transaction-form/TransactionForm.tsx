@@ -149,7 +149,7 @@ class TransactionForm extends Component<Props, State> {
     return (
       <Dialog fullScreen open={true}
               onClose={() => history.push('/')}>
-        <AppBar style={{ position: 'relative' }}>
+        <AppBar position="relative">
           <Toolbar>
             <IconButton edge="start" color="inherit"
                         onClick={() => history.push('/')}

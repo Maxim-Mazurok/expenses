@@ -4,7 +4,6 @@ import { Route, RouteComponentProps, withRouter } from 'react-router-dom';
 import { HamburgerConnected } from './hamburger/hamburger';
 import Dashboard from './dashboard/dashboard';
 import Settings from './settings/Settings';
-import { Snackbar } from '@material/react-snackbar';
 import Charts from './charts/Charts';
 import { TopBarConnected } from './top-bar/top-bar';
 import { connect } from 'react-redux';
@@ -15,13 +14,11 @@ const mapStateToProps = () => ({});
 type MainProps = ReturnType<typeof mapStateToProps> & {}
 
 export interface MainState {
-  snackbarMessage: string,
   drawerOpen: boolean
 }
 
 class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
   state: MainState = {
-    snackbarMessage: '',
     drawerOpen: false,
   };
 
@@ -44,6 +41,7 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
           openDrawer={this.openDrawer}
         />
         <HamburgerConnected
+          openDrawer={this.openDrawer}
           closeDrawer={this.closeDrawer}
           navigateTo={this.navigateTo}
           drawerOpen={this.state.drawerOpen}
@@ -67,9 +65,6 @@ class Main extends Component<RouteComponentProps<{}> & MainProps, MainState> {
             component={TransactionForm}
           />
         </>
-        <Snackbar
-          message={this.state.snackbarMessage || ''}
-        />
       </React.Fragment>
     );
   }

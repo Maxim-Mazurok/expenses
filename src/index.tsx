@@ -3,13 +3,15 @@ import ReactDOM from 'react-dom';
 
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-import 'material-icons/css/material-icons.css';
 import { Provider } from 'react-redux';
 import configureStore from './store';
+import { SnackbarProvider } from 'notistack';
 
 ReactDOM.render(
   <Provider store={configureStore()}>
-    <App />
+    <SnackbarProvider maxSnack={3}>
+      <App />
+    </SnackbarProvider>
   </Provider>,
   document.getElementById('root'),
 );

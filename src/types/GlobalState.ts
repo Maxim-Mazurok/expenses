@@ -1,6 +1,5 @@
 import { NewTransaction, Transaction } from './Transaction';
 
-export type SelectedMenuIndex = number | null;
 export type ClientId = string;
 export type SpreadSheetId = string;
 export type GapiReady = boolean;
@@ -16,9 +15,6 @@ export enum TransactionType {
 }
 
 export default interface GlobalState {
-  menu: {
-    readonly selectedMenuIndex: SelectedMenuIndex,
-  },
   settings: {
     readonly clientId: ClientId,
     readonly spreadSheetId: SpreadSheetId,

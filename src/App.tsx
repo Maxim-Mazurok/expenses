@@ -38,12 +38,6 @@ interface State {
   accounts: string[],
   categories: string[],
   processing: boolean,
-  showExpenseForm: boolean,
-  snackbarMessage: string,
-  snackbarOpen: boolean,
-  drawerOpen: boolean,
-  selectedMenuIndex: number,
-  topAppBarTitle: string,
   isGapiReady: boolean,
 }
 
@@ -52,12 +46,6 @@ class App extends Component<Props, State> {
     accounts: [],
     categories: [],
     processing: true,
-    showExpenseForm: false,
-    snackbarMessage: '',
-    snackbarOpen: false,
-    drawerOpen: false,
-    selectedMenuIndex: 0,
-    topAppBarTitle: '',
     isGapiReady: false,
   };
 
@@ -273,9 +261,8 @@ class App extends Component<Props, State> {
   render() {
     return (
       <BrowserRouter>
-        <CssBaseline>
-          <MainConnected />
-        </CssBaseline>
+        <CssBaseline />
+        <MainConnected />
       </BrowserRouter>
     );
   }

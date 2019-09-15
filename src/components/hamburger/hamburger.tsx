@@ -1,42 +1,28 @@
 import React, { Component } from 'react';
-import MaterialIcon from '@material/react-material-icon';
-
-import Drawer, {
-  DrawerContent,
-  DrawerHeader,
-  DrawerSubtitle,
-  DrawerTitle,
-} from '@material/react-drawer';
-import '@material/react-drawer/dist/drawer.css';
-
-import List, {
-  ListItem,
-  ListItemGraphic,
-  ListItemText,
-} from '@material/react-list';
-import '@material/react-list/dist/list.css';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { connect } from 'react-redux';
-import {
-  getProfile,
-  getSelectedMenuIndex,
-  Menu,
-  MenuItem,
-} from '../../selectors';
+import { getProfile, Menu, MenuItem } from '../../selectors';
 import GlobalState from '../../types/GlobalState';
-import { selectMenu } from '../../actions/selectMenu';
+import {
+  Avatar,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  SwipeableDrawer,
+  Typography,
+} from '@material-ui/core';
+import { NavLink, NavLinkProps } from 'react-router-dom';
 
 const mapStateToProps = (state: GlobalState) => ({
-  selectedMenuIndex: getSelectedMenuIndex(state),
   profile: getProfile(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
-    {
-      selectMenu,
-    },
+    {},
     dispatch,
   );
 
@@ -44,50 +30,63 @@ type HamburgerProps = ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps> & {
   drawerOpen?: boolean
   closeDrawer: () => void
+  openDrawer: () => void
   navigateTo: (url: string) => void
 };
 
 class Hamburger extends Component<RouteComponentProps<{}> & HamburgerProps> {
   render() {
-    const menu = Menu.map((menuItem: MenuItem) =>
+    const CollisionLink = React.forwardRef((props: NavLinkProps, ref: React.Ref<HTMLAnchorElement>) => (
+      <NavLink innerRef={ref} {...props} />
+    ));
+
+    const menu = Menu.map(({ text, url, IconComponent }: MenuItem, index: number) =>
       <ListItem
-        key={menuItem.text}
+        key={index}
+        button
+        component={CollisionLink}
+        activeClassName={'Mui-selected'}
+        to={url}
+        exact
+        onClick={this.props.closeDrawer}
       >
-        <ListItemGraphic graphic={<MaterialIcon icon={menuItem.icon} />} />
-        <ListItemText primaryText={menuItem.text} />
+        <ListItemIcon>
+          <IconComponent />
+        </ListItemIcon>
+        <ListItemText primary={text} />
       </ListItem>,
     );
 
-    return <Drawer
-      modal
+    return <SwipeableDrawer
       open={this.props.drawerOpen || false}
       onClose={this.props.closeDrawer}
+      onOpen={this.props.openDrawer}
     >
       {this.props.profile &&
-      <DrawerHeader>
-        <DrawerTitle>
-          {this.props.profile.getName()}
-        </DrawerTitle>
-        <DrawerSubtitle>
-          {this.props.profile.getEmail()}
-        </DrawerSubtitle>
-      </DrawerHeader>
+      <>
+        <div style={{ padding: 16 }}>
+          <Avatar
+            style={{
+              width: 60,
+              height: 60,
+            }}
+          />
+          <div style={{ paddingBottom: 16 }} />
+          <Typography variant={'h6'} noWrap>
+            {this.props.profile.getName()}
+          </Typography>
+          <Typography color={'textSecondary'} noWrap gutterBottom>
+            {this.props.profile.getEmail()}
+          </Typography>
+        </div>
+        <Divider />
+      </>
       }
 
-      <DrawerContent>
-        <List
-          singleSelection
-          selectedIndex={this.props.selectedMenuIndex || 0}
-          handleSelect={(menuIndex) => {
-            this.props.selectMenu(menuIndex);
-            this.props.navigateTo(Menu[menuIndex].url);
-            this.props.closeDrawer();
-          }}
-        >
-          {menu}
-        </List>
-      </DrawerContent>
-    </Drawer>;
+      <List>
+        {menu}
+      </List>
+    </SwipeableDrawer>;
   }
 }
 

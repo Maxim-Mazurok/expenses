@@ -1,9 +1,9 @@
 ## Maxim Mazurok Fork log / todo list:
-- [ ] Added icons and colors for:
-  - [x] Tech
-  - [x] Taxi
-  - [x] Education
+- [x] Replaced `@material` with `@material-ui`
+- [ ] Better categories:
+  - [x] Added icons and colors for "Tech", "Taxi" and "Education"
   - [ ] Add ability to set icons and colors from interface/google sheets
+  - [ ] Make categories transaction type specific
 - [ ] Multi-currency support (basic)
   - [x] If account name does not contain `(usd)` in the name, it's considered 
   to be UAH (₴) in interface
@@ -16,19 +16,13 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
   - [ ] DO it the right way
 - [ ] Track bank fees (as an optional field for transaction)
 - [ ] Track transfers (in a one special? transaction)
-- [ ] Update all deps
-  - [ ] Update material-components-web to 1.0.1 version (in progress)
-    - [x] Migrated snakbar, dialog, text-field, etc
-    - [ ] Fixed main list styling and others
-  - [x] Update material-icons
-  - [x] Update react, react-dom and react-scripts
-  - [ ] Get rid of 63 low severity vulnerabilities
 - [ ] Tests
   - [ ] Fix existing tests (`Cannot read property 'load' of undefined` in 
   `window.gapi.load(...`) 
   - [ ] Unit tests
   - [ ] Integration tests
 - [ ] Migrate to TS
+  - [x] All code now in TS 
   - [ ] Add code style linter
 - [ ] Fix standalone login on iOS by using 
 [pwacompat](https://github.com/GoogleChromeLabs/pwacompat)
@@ -36,7 +30,6 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
   - [ ] Use (non)-relational DBs for storage
 - [ ] Provide as a full SAAS solution
 - [ ] Add true full offline support
-- [x] `nodemon` for `npm run build` - don't need this since `npm run dev-start` does this job
 - [ ] Implement user's [onboarding](./ONBOARDING.md) on first start
   - [ ] At the end of it, there should be dedicated configure/login page
   - [ ] Handle no `clientId` or `spreadsheetId` edge case
@@ -45,10 +38,6 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
 - [ ] Display current and previous month expense/income on the dashboard
 - [ ] Add `window.gapi.auth2.getAuthInstance().signOut();` to the settings page (like in Telegram, for example)
 - [ ] Load more transactions, as user scrolls (they are already loaded, just show them)
-- [ ] Fix user information not showing up on the pages other then "Dashboard"
-- [ ] Probably, get rid of all `@material/*` deps
-- [ ] Replace `classnames` with `clsx`
-- [ ] Make categories transaction type specific
 - [ ] One transaction can be done from multiple accounts (for example, paying for groceries and using some bonuses to cover part of the expense)
 ---
 

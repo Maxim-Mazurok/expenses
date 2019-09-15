@@ -18,6 +18,7 @@ import {
 import { RouteComponentProps, withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { Transaction } from '../../types/Transaction';
+import { withSnackbar, WithSnackbarProps } from 'notistack';
 
 const mapStateToProps = (state: GlobalState) => ({
   spreadSheetId: getSpreadSheetId(state),
@@ -35,6 +36,7 @@ type Props =
   & ReturnType<typeof mapStateToProps>
   & ReturnType<typeof mapDispatchToProps>
   & RouteComponentProps
+  & WithSnackbarProps
   & {
   classes: {
     buttonWrapper: string
@@ -118,9 +120,15 @@ class DeleteDialog extends Component<Props, State> {
         () => {
           this.setState({ processing: false });
           this.props.history.push('/');
-          // TODO: show snackbar and reload data
+          this.props.enqueueSnackbar('Successfully deleted', {
+            variant: 'success',
+          });
+          // TODO: reload data
         }, (response: gapi.client.Response<gapi.client.sheets.BatchUpdateSpreadsheetResponse>) => {
           this.setState({ processing: false });
+          this.props.enqueueSnackbar('Error while deleting transaction', {
+            variant: 'error',
+          });
           console.error('Something went wrong'); // TODO handle error
           console.error(response);
         });
@@ -185,4 +193,10 @@ class DeleteDialog extends Component<Props, State> {
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(DeleteDialog)));
+export default withRouter(
+  withSnackbar(
+    connect(mapStateToProps, mapDispatchToProps)(
+      withStyles(styles)(DeleteDialog),
+    ),
+  ),
+);

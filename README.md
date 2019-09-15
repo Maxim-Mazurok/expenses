@@ -39,6 +39,7 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
 - [ ] Add `window.gapi.auth2.getAuthInstance().signOut();` to the settings page (like in Telegram, for example)
 - [ ] Load more transactions, as user scrolls (they are already loaded, just show them)
 - [ ] One transaction can be done from multiple accounts (for example, paying for groceries and using some bonuses to cover part of the expense)
+- [ ] Add dark theme
 ---
 
 💰Expenses is a 

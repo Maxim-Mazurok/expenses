@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import GlobalState from '../../types/GlobalState';
-import { getSpreadSheetId } from '../../selectors';
+import { getSheetId, getSpreadSheetId } from '../../selectors';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { setTransaction } from '../../actions/setTransaction';
 import {
@@ -22,6 +22,7 @@ import { withSnackbar, WithSnackbarProps } from 'notistack';
 
 const mapStateToProps = (state: GlobalState) => ({
   spreadSheetId: getSpreadSheetId(state),
+  sheetId: getSheetId(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
@@ -51,7 +52,7 @@ interface State {
   processing: boolean;
 }
 
-const loadingIconSize = 24;
+export const loadingIconSize = 24;
 
 const styles = () =>
   createStyles({
@@ -72,25 +73,6 @@ class DeleteDialog extends Component<Props, State> {
     processing: false,
   };
 
-  getSheetId = async (): Promise<gapi.client.sheets.SheetProperties['sheetId']> => {
-    if (process.env.REACT_APP_SHEET_NAME === undefined) return -1; // TODO: handle error
-
-    const { spreadSheetId } = this.props;
-
-    const response: gapi.client.Response<gapi.client.sheets.Spreadsheet> = await gapi.client.sheets.spreadsheets.get({
-      spreadsheetId: spreadSheetId,
-      includeGridData: false,
-    });
-
-    if (response.result.sheets === undefined) return -1; // TODO: handle error
-
-    const transactionsSheet = response.result.sheets.find(sheet => sheet.properties && sheet.properties.title === process.env.REACT_APP_SHEET_NAME);
-
-    if (transactionsSheet === undefined) return -1; // TODO: handle error
-
-    return transactionsSheet.properties ? transactionsSheet.properties.sheetId : -1; // TODO: handle error
-  };
-
   deleteTransaction = async () => {
     const { id } = this.props.transaction;
     if (id === undefined) return false; // TODO: handle error, show some error message, maybe?
@@ -106,7 +88,7 @@ class DeleteDialog extends Component<Props, State> {
             {
               deleteDimension: {
                 range: {
-                  sheetId: await this.getSheetId(),
+                  sheetId: this.props.sheetId,
                   dimension: 'ROWS',
                   startIndex: transactionRow - 1,
                   endIndex: transactionRow,

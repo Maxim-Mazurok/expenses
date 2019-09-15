@@ -13,6 +13,7 @@ import { setTransactions } from './actions/setTransactions';
 import { setAccounts } from './actions/setAccounts';
 import { setCategories } from './actions/setCategories';
 import { CssBaseline } from '@material-ui/core';
+import { setSheetId } from './actions/setSheetId';
 
 const mapStateToProps = (state: GlobalState) => ({
   clientId: getClientId(state),
@@ -27,6 +28,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
       setCategories,
       setAccounts,
       setTransactions,
+      setSheetId,
     },
     dispatch,
   );
@@ -96,6 +98,28 @@ class App extends Component<Props, State> {
       });
   };
 
+  loadSheetId = async () => {
+    if (process.env.REACT_APP_SHEET_NAME === undefined) return -1; // TODO: handle error
+
+    const { spreadSheetId } = this.props;
+
+    const response: gapi.client.Response<gapi.client.sheets.Spreadsheet> = await gapi.client.sheets.spreadsheets.get({
+      spreadsheetId: spreadSheetId,
+      includeGridData: false,
+    });
+
+    if (response.result.sheets === undefined) return; // TODO: handle error
+
+    const transactionsSheet = response.result.sheets.find(sheet => sheet.properties && sheet.properties.title === process.env.REACT_APP_SHEET_NAME);
+
+    if (transactionsSheet === undefined || transactionsSheet.properties === undefined) {
+      // TODO: handle error
+      return;
+    }
+
+    this.props.setSheetId(transactionsSheet.properties.sheetId);
+  };
+
   loadAllData = async (): Promise<void> => {
     const response: gapi.client.Response<gapi.client.sheets.BatchGetValuesResponse> = await gapi.client.sheets.spreadsheets.values
       .batchGet({
@@ -142,6 +166,7 @@ class App extends Component<Props, State> {
       await this.loadGAPI();
       await this.loadClient();
       await this.initClient();
+      await this.loadSheetId();
       this.props.setGapiReady(true);
       this.loadAllData();
       this.signIn();

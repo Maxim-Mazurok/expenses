@@ -1,5 +1,6 @@
 import { NewTransaction, Transaction } from './Transaction';
 
+export type SheetId = gapi.client.sheets.SheetProperties['sheetId'];
 export type ClientId = string;
 export type SpreadSheetId = string;
 export type GapiReady = boolean;
@@ -18,6 +19,7 @@ export default interface GlobalState {
   settings: {
     readonly clientId: ClientId,
     readonly spreadSheetId: SpreadSheetId,
+    readonly sheetId: SheetId,
     readonly profile: Profile,
   },
   misc: {

@@ -4,9 +4,15 @@ import { SET_SPREADSHEET_ID } from '../actions/setSpreadSheetId';
 import { SET_PROFILE } from '../actions/setProfile';
 import { SettingsActions } from '../actions';
 import { defaultState } from '../store';
+import { SET_SHEET_ID } from '../actions/setSheetId';
 
 export const SettingsReducer = (state: GlobalState['settings'] = defaultState.settings, action: SettingsActions): typeof defaultState.settings => {
   switch (action.type) {
+    case SET_SHEET_ID:
+      return {
+        ...state,
+        sheetId: action.payload,
+      };
     case SET_SPREADSHEET_ID:
       return {
         ...state,

@@ -4,6 +4,7 @@ import GlobalState, {
   ClientId,
   GapiReady,
   Profile,
+  SheetId,
   SpreadSheetId,
 } from './types/GlobalState';
 import { NewTransaction, Transaction } from './types/Transaction';
@@ -42,6 +43,7 @@ export const Menu = [
 
 export const getClientId = (state: GlobalState): ClientId => state.settings.clientId;
 export const getSpreadSheetId = (state: GlobalState): SpreadSheetId => state.settings.spreadSheetId;
+export const getSheetId = (state: GlobalState): SheetId => state.settings.sheetId;
 export const getProfile = (state: GlobalState): Profile => state.settings.profile;
 
 export const getAccounts = (state: GlobalState): Account[] => state.data.accounts;

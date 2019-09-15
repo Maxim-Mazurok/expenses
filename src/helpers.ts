@@ -47,6 +47,8 @@ import {
 } from '@material-ui/core/colors';
 import { Color } from '@material-ui/core';
 
+type CellData = gapi.client.sheets.CellData;
+
 interface IconAndColor {
   icon: SvgIconComponent,
   color: Color[500],
@@ -182,13 +184,73 @@ export const parseExpense = (value: string[], index: number): Transaction => {
   };
 };
 
-// export const formatExpense = (expense: Transaction) => ([
-//   `=DATE(${expense.date.getFullYear()}, ${expense.date.getMonth() + 1}, ${expense.date.getDate()})`,
-//   expense.description,
-//   expense.account,
-//   expense.category,
-//   expense.amount,
-// ]);
+export const formatTransaction = (transaction: Transaction): CellData[] => [
+  // TODO: add other validations
+  {
+    userEnteredValue: { formulaValue: `=DATE(${transaction.date.getFullYear()}, ${transaction.date.getMonth() + 1}, ${transaction.date.getDate()})` },
+  },
+  {
+    userEnteredValue: { stringValue: transaction.description },
+  },
+  {
+    userEnteredValue: { stringValue: transaction.fromAccount },
+    dataValidation: {
+      showCustomUi: true,
+      condition: {
+        type: 'ONE_OF_RANGE',
+        values: [
+          {
+            userEnteredValue: '=Data!A2:A',
+          },
+        ],
+      },
+    },
+  },
+  {
+    userEnteredValue: { stringValue: transaction.toAccount },
+  },
+  {
+    userEnteredValue: { stringValue: transaction.type },
+  },
+  {
+    userEnteredValue: { numberValue: transaction.rate },
+  },
+  {
+    userEnteredValue: { stringValue: transaction.category },
+  },
+  {
+    userEnteredValue: { numberValue: transaction.amount },
+  },
+  {
+    userEnteredValue: { numberValue: transaction.amountReceived },
+  },
+  {
+    userEnteredValue: { numberValue: transaction.fee },
+  },
+  {
+    userEnteredValue: { boolValue: transaction.taxable },
+    dataValidation: {
+      condition: {
+        type: 'BOOLEAN',
+      },
+    },
+  },
+  {
+    userEnteredValue: { stringValue: transaction.cashbackAccount },
+  },
+  {
+    userEnteredValue: { numberValue: transaction.cashbackAmount },
+  },
+  {
+    userEnteredValue: { stringValue: transaction.pointsAccount },
+  },
+  {
+    userEnteredValue: { numberValue: transaction.pointsAmount },
+  },
+  {
+    userEnteredValue: { numberValue: transaction.refundAmount },
+  },
+];
 
 export const formatDateToUI = (date: Date): string =>
   `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;

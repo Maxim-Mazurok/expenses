@@ -4,6 +4,7 @@ import GlobalState, { TransactionType } from '../../types/GlobalState';
 import {
   getAccounts,
   getCategories,
+  getSheetId,
   getSpreadSheetId,
   getTransaction,
   getTransactions,
@@ -14,6 +15,7 @@ import {
   AppBar,
   Button,
   Checkbox,
+  CircularProgress,
   createStyles,
   Dialog,
   FormControl,
@@ -41,7 +43,10 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import DeleteDialog from './DeleteDialog';
+import DeleteDialog, { loadingIconSize } from './DeleteDialog';
+import { withSnackbar, WithSnackbarProps } from 'notistack';
+import { formatTransaction } from '../../helpers';
+import { Transaction } from '../../types/Transaction';
 
 const mapStateToProps = (state: GlobalState) => ({
   categories: getCategories(state),
@@ -49,6 +54,7 @@ const mapStateToProps = (state: GlobalState) => ({
   transaction: getTransaction(state),
   transactions: getTransactions(state),
   spreadSheetId: getSpreadSheetId(state),
+  sheetId: getSheetId(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
@@ -63,15 +69,19 @@ type Props =
   & ReturnType<typeof mapStateToProps>
   & ReturnType<typeof mapDispatchToProps>
   & RouteComponentProps<{ id: string }>
+  & WithSnackbarProps
   & {
   classes: {
     title: string
     form: string
+    buttonWrapper: string
+    buttonProgress: string
   }
 }
 
 interface State {
   showDeleteDialog: boolean;
+  processing: boolean;
 }
 
 const styles = (theme: Theme) => {
@@ -82,6 +92,17 @@ const styles = (theme: Theme) => {
     },
     form: {
       margin: theme.spacing(2),
+    },
+    buttonWrapper: {
+      // TODO: create component, remove duplicates
+      position: 'relative',
+    },
+    buttonProgress: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      marginTop: -loadingIconSize / 2,
+      marginLeft: -loadingIconSize / 2,
     },
   });
 };
@@ -96,12 +117,24 @@ const transactionFromURL = (props: Props): void => {
       }
       props.setTransaction(transaction);
     }
+  } else {
+    props.setTransaction({
+      ...props.transaction,
+      date: new Date(),
+    });
   }
+
 };
+
+enum SubmitAction {
+  APPEND,
+  UPDATE,
+}
 
 class TransactionForm extends Component<Props, State> {
   state: State = {
     showDeleteDialog: false,
+    processing: false,
   };
 
   get formIsValid(): boolean {
@@ -138,9 +171,53 @@ class TransactionForm extends Component<Props, State> {
     });
   };
 
+  submitAction(action: SubmitAction): gapi.client.Request<gapi.client.sheets.AppendValuesResponse> {
+    // TODO: handle update action
+    return gapi.client.sheets.spreadsheets
+      .batchUpdate({
+        spreadsheetId: this.props.spreadSheetId,
+        resource: {
+          requests: [
+            {
+              appendCells: {
+                sheetId: this.props.sheetId,
+                fields: '*',
+                rows: [{
+                  values: formatTransaction(this.props.transaction as Transaction),
+                }],
+              },
+            },
+          ],
+        },
+      });
+  }
+
   handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    // TODO: this.props.onSubmit();
+
+    this.setState({ processing: true });
+    const submitAction: SubmitAction = this.props.transaction.id
+      ? SubmitAction.UPDATE
+      : SubmitAction.APPEND;
+
+    this.submitAction(submitAction).then(
+      () => {
+        this.setState({ processing: false });
+        this.props.history.push('/');
+        this.props.enqueueSnackbar(`Successfully ${submitAction === SubmitAction.APPEND ? 'added' : 'updated'}`, {
+          variant: 'success',
+        });
+        // TODO: dashboard.load();
+      },
+      (response: Error) => {
+        console.error('Something went wrong');
+        console.error(response);
+        this.setState({ processing: false });
+        this.props.enqueueSnackbar(`Failed to ${submitAction === SubmitAction.APPEND ? 'add' : 'update'}`, {
+          variant: 'error',
+        });
+      },
+    );
   };
 
   render() {
@@ -159,15 +236,23 @@ class TransactionForm extends Component<Props, State> {
             <Typography variant="h6" className={classes.title}>
               {transaction.hasOwnProperty('id') ? 'Edit' : 'New'}{' transaction'}
             </Typography>
-            <Button
-              color="inherit"
-              type={'submit'}
-              disabled={!this.formIsValid}
-              onClick={() => {/*TODO: save transaction*/
-              }}
+            <div
+              className={classes.buttonWrapper}
             >
-              {transaction.hasOwnProperty('id') ? 'update' : 'add'}
-            </Button>
+              <Button
+                color="inherit"
+                type={'submit'}
+                disabled={this.state.processing || !this.formIsValid}
+                onClick={this.handleSubmit}
+              >
+                {transaction.hasOwnProperty('id') ? 'update' : 'add'}
+                {this.state.processing && <CircularProgress
+                  size={loadingIconSize}
+                  className={classes.buttonProgress}
+                  disableShrink
+                />}
+              </Button>
+            </div>
             {transaction.hasOwnProperty('id') &&
             <Button
               color="inherit"
@@ -459,4 +544,10 @@ class TransactionForm extends Component<Props, State> {
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(TransactionForm)));
+export default withRouter(
+  withSnackbar(
+    connect(mapStateToProps, mapDispatchToProps)(
+      withStyles(styles)(TransactionForm),
+    ),
+  ),
+);

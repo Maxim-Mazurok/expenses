@@ -7,11 +7,13 @@ import { SetAccounts } from './setAccounts';
 import { SetTransactions } from './setTransactions';
 import { SetNewTransactionType } from './setNewTransactionType';
 import { SetTransaction } from './setTransaction';
+import { SetSheetId } from './setSheetId';
 
 export type SettingsActions =
   | SetClientId
   | SetProfile
   | SetSpreadSheetId
+  | SetSheetId
 export type MiscActions =
   | SetGapiReady
   | SetNewTransactionType

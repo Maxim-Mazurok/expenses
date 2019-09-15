@@ -9,6 +9,7 @@ import { DataReducer } from './reducers/data';
 export const defaultState: GlobalState = {
   settings: {
     clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID || '',
+    sheetId: undefined,
     spreadSheetId: process.env.REACT_APP_SHEET_ID || '',
     profile: undefined,
   },

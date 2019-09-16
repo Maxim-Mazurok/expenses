@@ -188,6 +188,17 @@ export const formatTransaction = (transaction: Transaction): CellData[] => [
   // TODO: add other validations
   {
     userEnteredValue: { formulaValue: `=DATE(${transaction.date.getFullYear()}, ${transaction.date.getMonth() + 1}, ${transaction.date.getDate()})` },
+    dataValidation: {
+      condition: {
+        type: 'DATE_IS_VALID',
+      },
+    },
+    userEnteredFormat: {
+      numberFormat: {
+        type: 'DATE',
+        pattern: 'yyyy"-"mm"-"dd',
+      },
+    },
   },
   {
     userEnteredValue: { stringValue: transaction.description },
@@ -208,15 +219,48 @@ export const formatTransaction = (transaction: Transaction): CellData[] => [
   },
   {
     userEnteredValue: { stringValue: transaction.toAccount },
+    dataValidation: {
+      showCustomUi: true,
+      condition: {
+        type: 'ONE_OF_RANGE',
+        values: [
+          {
+            userEnteredValue: '=Data!A2:A',
+          },
+        ],
+      },
+    },
   },
   {
     userEnteredValue: { stringValue: transaction.type },
+    dataValidation: {
+      showCustomUi: true,
+      condition: {
+        type: 'ONE_OF_RANGE',
+        values: [
+          {
+            userEnteredValue: '=Data!F2:F',
+          },
+        ],
+      },
+    },
   },
   {
     userEnteredValue: { numberValue: transaction.rate },
   },
   {
     userEnteredValue: { stringValue: transaction.category },
+    dataValidation: {
+      showCustomUi: true,
+      condition: {
+        type: 'ONE_OF_RANGE',
+        values: [
+          {
+            userEnteredValue: '=Data!E2:E',
+          },
+        ],
+      },
+    },
   },
   {
     userEnteredValue: { numberValue: transaction.amount },
@@ -237,12 +281,34 @@ export const formatTransaction = (transaction: Transaction): CellData[] => [
   },
   {
     userEnteredValue: { stringValue: transaction.cashbackAccount },
+    dataValidation: {
+      showCustomUi: true,
+      condition: {
+        type: 'ONE_OF_RANGE',
+        values: [
+          {
+            userEnteredValue: '=Data!A2:A',
+          },
+        ],
+      },
+    },
   },
   {
     userEnteredValue: { numberValue: transaction.cashbackAmount },
   },
   {
     userEnteredValue: { stringValue: transaction.pointsAccount },
+    dataValidation: {
+      showCustomUi: true,
+      condition: {
+        type: 'ONE_OF_RANGE',
+        values: [
+          {
+            userEnteredValue: '=Data!A2:A',
+          },
+        ],
+      },
+    },
   },
   {
     userEnteredValue: { numberValue: transaction.pointsAmount },

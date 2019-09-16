@@ -40,6 +40,7 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
 - [ ] Load more transactions, as user scrolls (they are already loaded, just show them)
 - [ ] One transaction can be done from multiple accounts (for example, paying for groceries and using some bonuses to cover part of the expense)
 - [ ] Add dark theme
+- [ ] Add lending/borrowing features
 ---
 
 💰Expenses is a 

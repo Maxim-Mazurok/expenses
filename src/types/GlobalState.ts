@@ -30,5 +30,9 @@ export default interface GlobalState {
     readonly transactions: Transaction[],
     readonly categories: Category[],
     readonly accounts: Account[],
-  }
+  },
+  loadAllData: {
+    loading: boolean,
+    error: string | null,
+  },
 }

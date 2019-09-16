@@ -47,6 +47,7 @@ import DeleteDialog, { loadingIconSize } from './DeleteDialog';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
 import { formatTransaction } from '../../helpers';
 import { Transaction } from '../../types/Transaction';
+import { loadAllData } from '../../actions/loadAllData';
 
 const mapStateToProps = (state: GlobalState) => ({
   categories: getCategories(state),
@@ -61,6 +62,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
       setTransaction,
+      loadAllData,
     },
     dispatch,
   );
@@ -207,7 +209,7 @@ class TransactionForm extends Component<Props, State> {
         this.props.enqueueSnackbar(`Successfully ${submitAction === SubmitAction.APPEND ? 'added' : 'updated'}`, {
           variant: 'success',
         });
-        // TODO: dashboard.load();
+        this.props.loadAllData();
       },
       (response: Error) => {
         console.error('Something went wrong');

@@ -19,6 +19,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { Transaction } from '../../types/Transaction';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
+import { loadAllData } from '../../actions/loadAllData';
 
 const mapStateToProps = (state: GlobalState) => ({
   spreadSheetId: getSpreadSheetId(state),
@@ -29,6 +30,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
   bindActionCreators(
     {
       setTransaction,
+      loadAllData,
     },
     dispatch,
   );
@@ -105,7 +107,7 @@ class DeleteDialog extends Component<Props, State> {
           this.props.enqueueSnackbar('Successfully deleted', {
             variant: 'success',
           });
-          // TODO: reload data
+          this.props.loadAllData();
         }, (response: gapi.client.Response<gapi.client.sheets.BatchUpdateSpreadsheetResponse>) => {
           this.setState({ processing: false });
           this.props.enqueueSnackbar('Error while deleting transaction', {

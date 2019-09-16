@@ -8,12 +8,9 @@ import { getClientId, getSpreadSheetId } from './selectors';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { setProfile } from './actions/setProfile';
 import { setGapiReady } from './actions/setGapiReady';
-import { parseExpense } from './helpers';
-import { setTransactions } from './actions/setTransactions';
-import { setAccounts } from './actions/setAccounts';
-import { setCategories } from './actions/setCategories';
 import { CssBaseline } from '@material-ui/core';
 import { setSheetId } from './actions/setSheetId';
+import { loadAllData } from './actions/loadAllData';
 
 const mapStateToProps = (state: GlobalState) => ({
   clientId: getClientId(state),
@@ -25,10 +22,8 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
     {
       setProfile,
       setGapiReady,
-      setCategories,
-      setAccounts,
-      setTransactions,
       setSheetId,
+      loadAllData,
     },
     dispatch,
   );
@@ -120,47 +115,6 @@ class App extends Component<Props, State> {
     this.props.setSheetId(transactionsSheet.properties.sheetId);
   };
 
-  loadAllData = async (): Promise<void> => {
-    const response: gapi.client.Response<gapi.client.sheets.BatchGetValuesResponse> = await gapi.client.sheets.spreadsheets.values
-      .batchGet({
-        spreadsheetId: this.props.spreadSheetId,
-        ranges: [
-          'Data!A2:A50',
-          'Data!E2:E50',
-          'Transactions!A2:O',
-          'Current!H1',
-          'Previous!H1',
-        ],
-      });
-    if (response.result.valueRanges === undefined
-      || response.result.valueRanges[0].values === undefined // accounts
-      || response.result.valueRanges[1].values === undefined // categories
-      || response.result.valueRanges[2].values === undefined // transactions
-      || response.result.valueRanges[3].values === undefined // currentMonth
-      || response.result.valueRanges[4].values === undefined // previousMonth
-    ) {
-      return;
-    }
-
-    this.props.setAccounts(response.result.valueRanges[0].values.map(
-      (items: string[]) => items[0],
-    ));
-
-    this.props.setCategories(response.result.valueRanges[1].values.map(
-      (items: string[]) => items[0],
-    ));
-
-    this.props.setTransactions(response.result.valueRanges[2].values
-      .map(parseExpense)
-      .reverse(),
-    );
-
-    // this.setState({
-    //   currentMonth: response.result.valueRanges[3].values[0][0],
-    //   previousMonth: response.result.valueRanges[4].values[0][0],
-    // });
-  };
-
   async componentDidMount() {
     try {
       await this.loadGAPI();
@@ -168,7 +122,7 @@ class App extends Component<Props, State> {
       await this.initClient();
       await this.loadSheetId();
       this.props.setGapiReady(true);
-      this.loadAllData();
+      this.props.loadAllData();
       this.signIn();
     } catch (e) {
       console.error(e);

@@ -26,6 +26,8 @@ const mapStateToProps = (state: GlobalState) => ({
   spreadSheetId: getSpreadSheetId(state),
   isGapiReady: isGapiReady(state),
   profile: getProfile(state),
+  loadAllDataError: state.loadAllData.error,
+  loadAllDataLoading: state.loadAllData.loading,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) =>
@@ -80,7 +82,7 @@ class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
 
     return (
       <>
-        {!this.props.isGapiReady &&
+        {(!this.props.isGapiReady || this.props.loadAllDataLoading) &&
         <LinearProgress variant="indeterminate" />
         }
         {this.props.isGapiReady && this.props.profile === undefined &&

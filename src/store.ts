@@ -1,10 +1,18 @@
-import { combineReducers, createStore, Reducer } from 'redux';
+import {
+  applyMiddleware,
+  combineReducers,
+  compose,
+  createStore,
+  Reducer,
+} from 'redux';
 import GlobalState, { TransactionType } from './types/GlobalState';
 import { Actions } from './actions';
 import { devToolsEnhancer } from 'redux-devtools-extension';
 import { SettingsReducer } from './reducers/settings';
 import { MiscReducer } from './reducers/misc';
 import { DataReducer } from './reducers/data';
+import thunk, { ThunkMiddleware } from 'redux-thunk';
+import { loadAllDataReducer } from './reducers/loadAllData';
 
 export const defaultState: GlobalState = {
   settings: {
@@ -24,6 +32,10 @@ export const defaultState: GlobalState = {
     categories: [],
     transactions: [],
   },
+  loadAllData: {
+    loading: false,
+    error: null,
+  },
 };
 
 function configureStore(state: GlobalState = defaultState) {
@@ -31,12 +43,18 @@ function configureStore(state: GlobalState = defaultState) {
     misc: MiscReducer,
     settings: SettingsReducer,
     data: DataReducer,
+    loadAllData: loadAllDataReducer,
   });
 
   return createStore(
     rootReducer as Reducer<GlobalState, Actions>,
     state as any,
-    devToolsEnhancer({ trace: true }),
+    compose(
+      applyMiddleware(
+        thunk as ThunkMiddleware<GlobalState, Actions>,
+      ),
+      devToolsEnhancer({ trace: true }),
+    ),
   );
 }
 

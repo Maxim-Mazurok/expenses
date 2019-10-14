@@ -261,7 +261,6 @@ class TransactionForm extends Component<Props, State> {
             />
           }
 
-          {/* TODO: maybe, display type editing only when editing existing transaction */}
           <FormControl
             fullWidth
             margin={'normal'}

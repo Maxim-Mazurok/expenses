@@ -185,7 +185,6 @@ export const parseExpense = (value: string[], index: number): Transaction => {
 };
 
 export const formatTransaction = (transaction: Transaction): CellData[] => [
-  // TODO: add other validations
   {
     userEnteredValue: { formulaValue: `=DATE(${transaction.date.getFullYear()}, ${transaction.date.getMonth() + 1}, ${transaction.date.getDate()})` },
     dataValidation: {

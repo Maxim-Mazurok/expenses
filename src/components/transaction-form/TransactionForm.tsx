@@ -15,7 +15,6 @@ import {
   AppBar,
   Button,
   Checkbox,
-  CircularProgress,
   createStyles,
   Dialog,
   FormControl,
@@ -43,11 +42,12 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import DeleteDialog, { loadingIconSize } from './DeleteDialog';
+import DeleteDialog from './DeleteDialog';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
 import { formatTransaction } from '../../helpers';
 import { Transaction } from '../../types/Transaction';
 import { loadAllData } from '../../actions/loadAllData';
+import { ButtonWithProgress } from '../ButtonWithProgress';
 
 const mapStateToProps = (state: GlobalState) => ({
   categories: getCategories(state),
@@ -76,8 +76,6 @@ type Props =
   classes: {
     title: string
     form: string
-    buttonWrapper: string
-    buttonProgress: string
   }
 }
 
@@ -94,17 +92,6 @@ const styles = (theme: Theme) => {
     },
     form: {
       margin: theme.spacing(2),
-    },
-    buttonWrapper: {
-      // TODO: create component, remove duplicates
-      position: 'relative',
-    },
-    buttonProgress: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      marginTop: -loadingIconSize / 2,
-      marginLeft: -loadingIconSize / 2,
     },
   });
 };
@@ -224,6 +211,7 @@ class TransactionForm extends Component<Props, State> {
 
   render() {
     const { classes, transaction, history } = this.props;
+    const { processing } = this.state;
 
     return (
       <Dialog fullScreen open={true}
@@ -238,23 +226,12 @@ class TransactionForm extends Component<Props, State> {
             <Typography variant="h6" className={classes.title}>
               {transaction.hasOwnProperty('id') ? 'Edit' : 'New'}{' transaction'}
             </Typography>
-            <div
-              className={classes.buttonWrapper}
-            >
-              <Button
-                color="inherit"
-                type={'submit'}
-                disabled={this.state.processing || !this.formIsValid}
-                onClick={this.handleSubmit}
-              >
-                {transaction.hasOwnProperty('id') ? 'update' : 'add'}
-                {this.state.processing && <CircularProgress
-                  size={loadingIconSize}
-                  className={classes.buttonProgress}
-                  disableShrink
-                />}
-              </Button>
-            </div>
+            <ButtonWithProgress
+              disabled={this.state.processing || !this.formIsValid}
+              onClick={this.handleSubmit}
+              text={transaction.hasOwnProperty('id') ? 'Update' : 'Add'}
+              processing={processing}
+            />
             {transaction.hasOwnProperty('id') &&
             <Button
               color="inherit"

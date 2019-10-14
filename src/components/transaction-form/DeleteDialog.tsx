@@ -6,20 +6,18 @@ import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 import { setTransaction } from '../../actions/setTransaction';
 import {
   Button,
-  CircularProgress,
-  createStyles,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  withStyles,
 } from '@material-ui/core';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { Transaction } from '../../types/Transaction';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
 import { loadAllData } from '../../actions/loadAllData';
+import { ButtonWithProgress } from '../ButtonWithProgress';
 
 const mapStateToProps = (state: GlobalState) => ({
   spreadSheetId: getSpreadSheetId(state),
@@ -41,11 +39,6 @@ type Props =
   & RouteComponentProps
   & WithSnackbarProps
   & {
-  classes: {
-    buttonWrapper: string
-    buttonProgress: string
-  }
-} & {
   onClose: () => void
   transaction: Transaction
 };
@@ -53,22 +46,6 @@ type Props =
 interface State {
   processing: boolean;
 }
-
-export const loadingIconSize = 24;
-
-const styles = () =>
-  createStyles({
-    buttonWrapper: {
-      position: 'relative',
-    },
-    buttonProgress: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      marginTop: -loadingIconSize / 2,
-      marginLeft: -loadingIconSize / 2,
-    },
-  });
 
 class DeleteDialog extends Component<Props, State> {
   state: State = {
@@ -119,7 +96,7 @@ class DeleteDialog extends Component<Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
+    const { processing } = this.state;
 
     return (
       <Dialog
@@ -155,22 +132,15 @@ class DeleteDialog extends Component<Props, State> {
           >
             Cancel
           </Button>
-          <div
-            className={classes.buttonWrapper}
-          >
-            <Button
-              disabled={this.state.processing}
-              onClick={this.deleteTransaction}
-              color="primary"
-            >
-              Delete
-              {this.state.processing && <CircularProgress
-                size={loadingIconSize}
-                className={classes.buttonProgress}
-                disableShrink
-              />}
-            </Button>
-          </div>
+          <ButtonWithProgress
+            buttonProps={{
+              color: 'primary',
+            }}
+            disabled={this.state.processing}
+            onClick={this.deleteTransaction}
+            text="Delete"
+            processing={processing}
+          />
         </DialogActions>
       </Dialog>
     );
@@ -180,7 +150,7 @@ class DeleteDialog extends Component<Props, State> {
 export default withRouter(
   withSnackbar(
     connect(mapStateToProps, mapDispatchToProps)(
-      withStyles(styles)(DeleteDialog),
+      DeleteDialog,
     ),
   ),
 );

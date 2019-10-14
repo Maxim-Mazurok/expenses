@@ -121,11 +121,7 @@ class Dashboard extends Component<RouteComponentProps<{}> & Props, State> {
     );
   }
 
-  handleTransactionCancel = () => {
-    // TODO: move to TransactionForm and prompt for confirmation if fields are dirty, or just save data (or even better - do both)
-  };
   onNewTransaction = (type: TransactionType) => {
-    // TODO: add URL handling (like, /new or something)
     this.props.history.push('/transaction');
     this.props.setTransaction({ type });
   };

@@ -31,7 +31,7 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+import { Close, Delete } from '@material-ui/icons';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { TransactionTypeName } from '../../texts';
 import { connect } from 'react-redux';
@@ -126,7 +126,7 @@ class TransactionForm extends Component<Props, State> {
     processing: false,
   };
 
-  get formIsValid(): boolean {
+  formIsValid(): boolean {
     // TODO: validate category (or suggest creating new)
     return this.props.transaction.amount !== undefined && this.props.transaction.amount > 0;
   }
@@ -227,7 +227,10 @@ class TransactionForm extends Component<Props, State> {
               {transaction.hasOwnProperty('id') ? 'Edit' : 'New'}{' transaction'}
             </Typography>
             <ButtonWithProgress
-              disabled={this.state.processing || !this.formIsValid}
+              buttonProps={{
+                color: 'inherit',
+              }}
+              disabled={this.state.processing || !this.formIsValid()}
               onClick={this.handleSubmit}
               text={transaction.hasOwnProperty('id') ? 'Update' : 'Add'}
               processing={processing}
@@ -237,7 +240,8 @@ class TransactionForm extends Component<Props, State> {
               color="inherit"
               onClick={() => this.setState({ showDeleteDialog: true })}
             >
-              delete {/*TODO: add icon*/}
+              <Delete />
+              delete
             </Button>
             }
           </Toolbar>

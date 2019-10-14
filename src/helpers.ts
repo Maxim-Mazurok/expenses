@@ -184,6 +184,8 @@ export const parseExpense = (value: string[], index: number): Transaction => {
   };
 };
 
+export const cellRowNumber = (cellPath: string) => parseInt(cellPath.split('!')[1].replace(/\D/g, ''));
+
 export const formatTransaction = (transaction: Transaction): CellData[] => [
   {
     userEnteredValue: { formulaValue: `=DATE(${transaction.date.getFullYear()}, ${transaction.date.getMonth() + 1}, ${transaction.date.getDate()})` },

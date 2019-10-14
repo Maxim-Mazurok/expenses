@@ -44,7 +44,7 @@ import {
 import DateFnsUtils from '@date-io/date-fns';
 import DeleteDialog from './DeleteDialog';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
-import { formatTransaction } from '../../helpers';
+import { cellRowNumber, formatTransaction } from '../../helpers';
 import { Transaction } from '../../types/Transaction';
 import { loadAllData } from '../../actions/loadAllData';
 import { ButtonWithProgress } from '../ButtonWithProgress';
@@ -160,26 +160,53 @@ class TransactionForm extends Component<Props, State> {
     });
   };
 
-  submitAction(action: SubmitAction): gapi.client.Request<gapi.client.sheets.AppendValuesResponse> {
-    // TODO: handle update action
-    return gapi.client.sheets.spreadsheets
-      .batchUpdate({
-        spreadsheetId: this.props.spreadSheetId,
-        resource: {
-          requests: [
-            {
-              appendCells: {
-                sheetId: this.props.sheetId,
-                fields: '*',
-                rows: [{
-                  values: formatTransaction(this.props.transaction as Transaction),
-                }],
-              },
+  submitAction = async (action: SubmitAction): Promise<gapi.client.Response<gapi.client.sheets.BatchUpdateSpreadsheetResponse>> => {
+    const { transaction, spreadSheetId, sheetId } = this.props;
+    switch (action) {
+      case SubmitAction.APPEND:
+        return gapi.client.sheets.spreadsheets
+          .batchUpdate({
+            spreadsheetId: spreadSheetId,
+            resource: {
+              requests: [
+                {
+                  appendCells: {
+                    sheetId,
+                    fields: '*',
+                    rows: [{
+                      values: formatTransaction(transaction as Transaction),
+                    }],
+                  },
+                },
+              ],
             },
-          ],
-        },
-      });
-  }
+          });
+      case SubmitAction.UPDATE:
+        if (typeof transaction.id !== 'undefined') {
+          return gapi.client.sheets.spreadsheets
+            .batchUpdate({
+              spreadsheetId: spreadSheetId,
+              resource: {
+                requests: [
+                  {
+                    updateCells: {
+                      fields: '*',
+                      start: {
+                        rowIndex: cellRowNumber(transaction.id),
+                        sheetId,
+                      },
+                      rows: [{
+                        values: formatTransaction(transaction as Transaction),
+                      }],
+                    },
+                  },
+                ],
+              },
+            });
+        }
+    }
+    throw new Error('Can\'t perform an action'); // TODO: error handling
+  };
 
   handleSubmit = (event: FormEvent) => {
     event.preventDefault();

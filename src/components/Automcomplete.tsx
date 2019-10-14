@@ -22,7 +22,7 @@ import { ValueType } from 'react-select/src/types';
 import { Omit } from '@material-ui/types';
 import GlobalState from '../types/GlobalState';
 
-type OptionType = undefined | {
+type OptionType = {
   label: string;
   value: string;
 }

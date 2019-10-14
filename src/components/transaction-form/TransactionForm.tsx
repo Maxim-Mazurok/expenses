@@ -165,7 +165,7 @@ class TransactionForm extends Component<Props, State> {
 
   handleInputChange = (event: any) => {
     const target = event.target;
-    const value = target.hasOwnProperty('checked') ? target.checked : target.value;
+    const value = target.type === 'checkbox' && target.hasOwnProperty('checked') ? target.checked : target.value;
 
     this.props.setTransaction({
       ...this.props.transaction,

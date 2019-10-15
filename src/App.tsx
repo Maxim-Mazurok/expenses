@@ -120,7 +120,11 @@ class App extends Component<Props, State> {
       await this.loadGAPI();
       await this.loadClient();
       await this.initClient();
-      await this.loadSheetId();
+      try {
+        await this.loadSheetId();
+      } catch (e) {
+        // TODO: fix sign in flow
+      }
       this.props.setGapiReady(true);
       this.props.loadAllData();
       this.signIn();

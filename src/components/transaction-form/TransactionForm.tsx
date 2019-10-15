@@ -127,8 +127,19 @@ class TransactionForm extends Component<Props, State> {
   };
 
   formIsValid(): boolean {
-    // TODO: validate category (or suggest creating new)
-    return this.props.transaction.amount !== undefined && this.props.transaction.amount > 0;
+    const { transaction, categories, accounts } = this.props;
+    const { amount, category, fromAccount } = transaction;
+
+    const validAmount = amount !== undefined && amount > 0;
+    const validCategory = category !== undefined && categories.indexOf(category) !== -1;
+    const validDate = true; // TODO validate date
+    const validFromAccount = fromAccount !== undefined && accounts.indexOf(fromAccount) !== -1;
+
+    return validAmount
+      && validCategory
+      && validDate
+      && validFromAccount
+      ;
   }
 
   componentDidMount() {
@@ -237,7 +248,7 @@ class TransactionForm extends Component<Props, State> {
   };
 
   render() {
-    const { classes, transaction, history } = this.props;
+    const { classes, transaction, history, categories } = this.props;
     const { processing } = this.state;
 
     return (
@@ -276,7 +287,6 @@ class TransactionForm extends Component<Props, State> {
         <form
           className={classes.form}
           onSubmit={this.handleSubmit}
-          noValidate
         >
           {
             this.state.showDeleteDialog &&
@@ -434,7 +444,7 @@ class TransactionForm extends Component<Props, State> {
               })}
               label={'Category'}
               placeholder={'Select a category'}
-              suggestions={this.props.categories}
+              suggestions={categories}
               value={transaction.category}
             />
           </FormControl>

@@ -198,8 +198,8 @@ class App extends Component {
       .batchGet({
         spreadsheetId: this.spreadsheetId,
         ranges: [
-          "Data!A2:A50",
-          "Data!E2:E50",
+          "Data!A2:A",
+          "Data!E2:E",
           "Expenses!A2:F",
           "Current!H1",
           "Previous!H1"

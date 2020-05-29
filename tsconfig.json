@@ -18,10 +18,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "types": [
-      "gapi",
-      "gapi.auth2"
-    ],
     "baseUrl": "./src"
   },
   "compileOnSave": false,

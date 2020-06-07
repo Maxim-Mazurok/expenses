@@ -7,6 +7,17 @@ export default class ExpenseDetail extends Component {
     return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
   }
 
+  getCurrencySymbolForAccount(account) {
+    if (account.indexOf("(usd)") !== -1) {
+      return "US$";
+    } else if (account.indexOf("(uah)") !== -1) {
+      return "₴";
+    } else if (account.indexOf("(aud)") !== -1) {
+      return "AU$";
+    }
+    return "???";
+  }
+
   render() {
     return (
       <li
@@ -24,7 +35,7 @@ export default class ExpenseDetail extends Component {
           </span>
         </span>
         <span className="mdc-list-item__end-detail">
-          {this.props.expense.account.indexOf('(usd)')===-1 ? '₴' : '$'}{this.props.expense.amount}
+          {this.getCurrencySymbolForAccount(this.props.expense.account)}{this.props.expense.amount}
         </span>
       </li>
     );

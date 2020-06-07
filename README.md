@@ -27,7 +27,7 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
 - [ ] Fix standalone login on iOS by using 
 [pwacompat](https://github.com/GoogleChromeLabs/pwacompat)
 - [ ] DB options
-  - [ ] Use (non)-relational DBs for storage
+  - [ ] Use MongoDB for speed, flexibility and [Decimal](https://docs.mongodb.com/manual/core/shell-types/#numberdecimal) + [typeorm](https://github.com/typeorm/typeorm) + GraphQL + [vesper](https://github.com/vesper-framework/vesper)
 - [ ] Provide as a full SAAS solution
 - [ ] Add true full offline support
 - [ ] Implement user's [onboarding](./ONBOARDING.md) on first start

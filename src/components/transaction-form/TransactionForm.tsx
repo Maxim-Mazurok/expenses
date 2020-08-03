@@ -38,7 +38,6 @@ import { connect } from 'react-redux';
 import Autocomplete from '../Automcomplete';
 import {
   KeyboardDatePicker,
-  MaterialUiPickersDate,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
@@ -48,6 +47,7 @@ import { cellRowNumber, formatTransaction } from '../../helpers';
 import { Transaction } from '../../types/Transaction';
 import { loadAllData } from '../../actions/loadAllData';
 import { ButtonWithProgress } from '../ButtonWithProgress';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 
 const mapStateToProps = (state: GlobalState) => ({
   categories: getCategories(state),
@@ -466,7 +466,7 @@ class TransactionForm extends Component<Props, State> {
               name="date"
               margin="normal"
               label="Date"
-              format="MM/dd/yyyy"
+              format="fullDate"
               value={transaction.date || new Date()}
               onChange={this.handleDateChange}
               KeyboardButtonProps={{

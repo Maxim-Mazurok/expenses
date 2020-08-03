@@ -10,7 +10,7 @@
     "@date-io/date-fns": "^2.8.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
-    "@material-ui/pickers": "^3.2.10",
+    "@material-ui/pickers": "next",
     "cross-env": "^7.0.2",
     "date-fns": "^2.15.0",
     "node-sass": "^4.14.1",

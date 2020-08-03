@@ -30,6 +30,7 @@ import {
   Toolbar,
   Typography,
   withStyles,
+  Container,
 } from '@material-ui/core';
 import { Close, Delete } from '@material-ui/icons';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -37,8 +38,8 @@ import { TransactionTypeName } from '../../texts';
 import { connect } from 'react-redux';
 import Autocomplete from '../Automcomplete';
 import {
-  KeyboardDatePicker,
-  MuiPickersUtilsProvider,
+  DatePicker,
+  LocalizationProvider,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import DeleteDialog from './DeleteDialog';
@@ -47,7 +48,6 @@ import { cellRowNumber, formatTransaction } from '../../helpers';
 import { Transaction } from '../../types/Transaction';
 import { loadAllData } from '../../actions/loadAllData';
 import { ButtonWithProgress } from '../ButtonWithProgress';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 
 const mapStateToProps = (state: GlobalState) => ({
   categories: getCategories(state),
@@ -73,11 +73,11 @@ type Props =
   & RouteComponentProps<{ id: string }>
   & WithSnackbarProps
   & {
-  classes: {
-    title: string
-    form: string
+    classes: {
+      title: string
+      form: string
+    }
   }
-}
 
 interface State {
   showDeleteDialog: boolean;
@@ -152,7 +152,7 @@ class TransactionForm extends Component<Props, State> {
     }
   }
 
-  handleDateChange = (date: MaterialUiPickersDate): void => {
+  handleDateChange = (date: Date | null): void => {
     if (date) {
       this.props.setTransaction({
         ...this.props.transaction,
@@ -253,12 +253,12 @@ class TransactionForm extends Component<Props, State> {
 
     return (
       <Dialog fullScreen open={true}
-              onClose={() => history.push('/')}>
+        onClose={() => history.push('/')}>
         <AppBar position="relative">
           <Toolbar>
             <IconButton edge="start" color="inherit"
-                        onClick={() => history.push('/')}
-                        aria-label="close">
+              onClick={() => history.push('/')}
+              aria-label="close">
               <Close />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
@@ -274,290 +274,289 @@ class TransactionForm extends Component<Props, State> {
               processing={processing}
             />
             {transaction.hasOwnProperty('id') &&
-            <Button
-              color="inherit"
-              onClick={() => this.setState({ showDeleteDialog: true })}
-            >
-              <Delete />
+              <Button
+                color="inherit"
+                onClick={() => this.setState({ showDeleteDialog: true })}
+              >
+                <Delete />
               delete
             </Button>
             }
           </Toolbar>
         </AppBar>
-        <form
-          className={classes.form}
-          onSubmit={this.handleSubmit}
-        >
-          {
-            this.state.showDeleteDialog &&
-            transaction.hasOwnProperty('id') &&
-            transaction.id !== undefined &&
-            <DeleteDialog
-              onClose={() => this.setState({ showDeleteDialog: false })}
-              transaction={transaction}
-            />
-          }
-
-          <FormControl
-            fullWidth
-            margin={'normal'}
+        <Container maxWidth="xs">
+          <form
+            className={classes.form}
+            onSubmit={this.handleSubmit}
           >
-            <FormLabel
-              required
-            >
-              Transaction type
-            </FormLabel>
-            <RadioGroup
-              name="type"
-              value={transaction.type}
-              onChange={this.handleInputChange}
-              row
-            >
-              <FormControlLabel
-                value={TransactionType.EXPENSE}
-                control={<Radio />}
-                label={TransactionTypeName(TransactionType.EXPENSE)}
-              />
-              <FormControlLabel
-                value={TransactionType.INCOME}
-                control={<Radio />}
-                label={TransactionTypeName(TransactionType.INCOME)}
-              />
-              <FormControlLabel
-                value={TransactionType.TRANSFER}
-                control={<Radio />}
-                label={TransactionTypeName(TransactionType.TRANSFER)}
-              />
-            </RadioGroup>
-          </FormControl>
-
-          <FormControl
-            fullWidth
-            margin={'normal'}
-          >
-            <InputLabel
-              htmlFor="amount"
-              required
-            >
-              {transaction.type === TransactionType.TRANSFER ? 'Amount Sent' : 'Amount'}
-            </InputLabel>
-            <Input
-              id="amount"
-              autoFocus={!transaction.hasOwnProperty('id')}
-              name="amount"
-              value={transaction.amount || ''}
-              onChange={this.handleInputChange}
-              type="number"
-              inputProps={{
-                step: 0.01,
-                min: 0,
-              }}
-              required
-              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                if (['-', '+', 'e'].indexOf(event.key) !== -1) {
-                  // also fixes https://material-ui.com/components/text-fields/#shrink
-                  event.preventDefault();
-                }
-              }}
-            />
-          </FormControl>
-
-          {transaction.type === TransactionType.TRANSFER &&
-          <FormControl
-            fullWidth
-            margin={'normal'}
-          >
-            <InputLabel
-              htmlFor="amountReceived"
-              required
-            >
-              Amount Received
-            </InputLabel>
-            <Input
-              id="amountReceived"
-              name="amountReceived"
-              value={transaction.amountReceived || ''}
-              onChange={this.handleInputChange}
-              type="number"
-              inputProps={{
-                step: 0.01,
-                min: 0,
-              }}
-              required
-              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                if (['-', '+', 'e'].indexOf(event.key) !== -1) {
-                  // also fixes https://material-ui.com/components/text-fields/#shrink
-                  event.preventDefault();
-                }
-              }}
-            />
-          </FormControl>}
-
-          <FormControl
-            fullWidth
-            margin={'normal'}
-          >
-            <InputLabel
-              htmlFor="fee"
-            >
-              Fee
-            </InputLabel>
-            <Input
-              id="fee"
-              name="fee"
-              value={transaction.fee || ''}
-              onChange={this.handleInputChange}
-              type="number"
-              inputProps={{
-                step: 0.01,
-                min: 0,
-              }}
-              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                if (['-', '+', 'e'].indexOf(event.key) !== -1) {
-                  // also fixes https://material-ui.com/components/text-fields/#shrink
-                  event.preventDefault();
-                }
-              }}
-            />
-          </FormControl>
-
-          <FormControlLabel
-            name="taxable"
-            control={
-              <Checkbox
-                checked={transaction.taxable || false}
-                onChange={this.handleInputChange}
+            {
+              this.state.showDeleteDialog &&
+              transaction.hasOwnProperty('id') &&
+              transaction.id !== undefined &&
+              <DeleteDialog
+                onClose={() => this.setState({ showDeleteDialog: false })}
+                transaction={transaction}
               />
             }
-            label="Taxable"
-          />
 
-          <FormControl
-            fullWidth
-            margin={'normal'}
-          >
-            <Autocomplete
-              required
-              handleChange={(category: string) => this.props.setTransaction({
-                ...transaction,
-                category,
-              })}
-              label={'Category'}
-              placeholder={'Select a category'}
-              suggestions={categories}
-              value={transaction.category}
-            />
-          </FormControl>
-
-          <TextField
-            fullWidth
-            name="description"
-            label="Description"
-            value={transaction.description || ''}
-            onChange={this.handleInputChange}
-            margin="normal"
-          />
-
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker
-              required
-              autoOk
+            <FormControl
               fullWidth
-              name="date"
-              margin="normal"
-              label="Date"
-              format="fullDate"
-              value={transaction.date || new Date()}
-              onChange={this.handleDateChange}
-              KeyboardButtonProps={{
-                'aria-label': 'date',
-              }}
-            />
-          </MuiPickersUtilsProvider>
-
-          <FormControl
-            fullWidth
-            margin={'normal'}
-          >
-            <Autocomplete
-              required
-              handleChange={(account: string) => this.props.setTransaction({
-                ...transaction,
-                fromAccount: account,
-              })}
-              label={transaction.type === TransactionType.TRANSFER ? 'From Account' : 'Account'}
-              placeholder={'Select an account'}
-              suggestions={this.props.accounts}
-              value={transaction.fromAccount}
-            />
-          </FormControl>
-
-          {transaction.type === TransactionType.TRANSFER &&
-          <FormControl
-            fullWidth
-            margin={'normal'}
-          >
-            <Autocomplete
-              required
-              handleChange={(account: string) => this.props.setTransaction({
-                ...transaction,
-                toAccount: account,
-              })}
-              label={'To Account'}
-              placeholder={'Select an account'}
-              suggestions={this.props.accounts}
-              value={transaction.toAccount}
-            />
-          </FormControl>}
-
-          <FormControl
-            fullWidth
-            margin={'normal'}
-          >
-            <Autocomplete
-              handleChange={(account: string | undefined) => this.props.setTransaction({
-                ...transaction,
-                cashbackAccount: account,
-              })}
-              label={'Cashback Account'}
-              placeholder={'Select an account'}
-              suggestions={this.props.accounts}
-              value={transaction.cashbackAccount}
-            />
-          </FormControl>
-
-          {transaction.cashbackAccount &&
-          <FormControl
-            fullWidth
-            margin={'normal'}
-          >
-            <InputLabel
-              htmlFor="cashbackAmount"
-              required
+              margin={'normal'}
             >
-              Cashback Amount
+              <FormLabel
+                required
+              >
+                Transaction type
+            </FormLabel>
+              <RadioGroup
+                name="type"
+                value={transaction.type}
+                onChange={this.handleInputChange}
+                row
+              >
+                <FormControlLabel
+                  value={TransactionType.EXPENSE}
+                  control={<Radio />}
+                  label={TransactionTypeName(TransactionType.EXPENSE)}
+                />
+                <FormControlLabel
+                  value={TransactionType.INCOME}
+                  control={<Radio />}
+                  label={TransactionTypeName(TransactionType.INCOME)}
+                />
+                <FormControlLabel
+                  value={TransactionType.TRANSFER}
+                  control={<Radio />}
+                  label={TransactionTypeName(TransactionType.TRANSFER)}
+                />
+              </RadioGroup>
+            </FormControl>
+
+            <FormControl
+              fullWidth
+              margin={'normal'}
+            >
+              <InputLabel
+                htmlFor="amount"
+                required
+              >
+                {transaction.type === TransactionType.TRANSFER ? 'Amount Sent' : 'Amount'}
+              </InputLabel>
+              <Input
+                id="amount"
+                autoFocus={!transaction.hasOwnProperty('id')}
+                name="amount"
+                value={transaction.amount || ''}
+                onChange={this.handleInputChange}
+                type="number"
+                inputProps={{
+                  step: 0.01,
+                  min: 0,
+                }}
+                required
+                onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (['-', '+', 'e'].indexOf(event.key) !== -1) {
+                    // also fixes https://material-ui.com/components/text-fields/#shrink
+                    event.preventDefault();
+                  }
+                }}
+              />
+            </FormControl>
+
+            {transaction.type === TransactionType.TRANSFER &&
+              <FormControl
+                fullWidth
+                margin={'normal'}
+              >
+                <InputLabel
+                  htmlFor="amountReceived"
+                  required
+                >
+                  Amount Received
             </InputLabel>
-            <Input
-              id="cashbackAmount"
-              autoFocus={!transaction.hasOwnProperty('id')}
-              name="cashbackAmount"
-              value={transaction.cashbackAmount || ''}
-              onChange={this.handleInputChange}
-              type="number"
-              inputProps={{
-                step: 0.01,
-                min: 0,
-              }}
-              required
-              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                if (['-', '+', 'e'].indexOf(event.key) !== -1) {
-                  // also fixes https://material-ui.com/components/text-fields/#shrink
-                  event.preventDefault();
-                }
-              }}
+                <Input
+                  id="amountReceived"
+                  name="amountReceived"
+                  value={transaction.amountReceived || ''}
+                  onChange={this.handleInputChange}
+                  type="number"
+                  inputProps={{
+                    step: 0.01,
+                    min: 0,
+                  }}
+                  required
+                  onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (['-', '+', 'e'].indexOf(event.key) !== -1) {
+                      // also fixes https://material-ui.com/components/text-fields/#shrink
+                      event.preventDefault();
+                    }
+                  }}
+                />
+              </FormControl>}
+
+            <FormControl
+              fullWidth
+              margin={'normal'}
+            >
+              <InputLabel
+                htmlFor="fee"
+              >
+                Fee
+            </InputLabel>
+              <Input
+                id="fee"
+                name="fee"
+                value={transaction.fee || ''}
+                onChange={this.handleInputChange}
+                type="number"
+                inputProps={{
+                  step: 0.01,
+                  min: 0,
+                }}
+                onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (['-', '+', 'e'].indexOf(event.key) !== -1) {
+                    // also fixes https://material-ui.com/components/text-fields/#shrink
+                    event.preventDefault();
+                  }
+                }}
+              />
+            </FormControl>
+
+            <FormControlLabel
+              name="taxable"
+              control={
+                <Checkbox
+                  checked={transaction.taxable || false}
+                  onChange={this.handleInputChange}
+                />
+              }
+              label="Taxable"
             />
-          </FormControl>}
-        </form>
+
+            <FormControl
+              fullWidth
+              margin={'normal'}
+            >
+              <Autocomplete
+                required
+                handleChange={(category: string) => this.props.setTransaction({
+                  ...transaction,
+                  category,
+                })}
+                label={'Category'}
+                placeholder={'Select a category'}
+                suggestions={categories}
+                value={transaction.category}
+              />
+            </FormControl>
+
+            <TextField
+              fullWidth
+              name="description"
+              label="Description"
+              value={transaction.description || ''}
+              onChange={this.handleInputChange}
+              margin="normal"
+            />
+
+            <LocalizationProvider dateAdapter={DateFnsUtils}>
+              <DatePicker
+                renderInput={
+                  props => <TextField {...props} required name="date" fullWidth margin="normal" />}
+                label="Date"
+                inputFormat="MM/dd/yyyy"
+                value={transaction.date || new Date()}
+                onChange={this.handleDateChange}
+                OpenPickerButtonProps={{
+                  'aria-label': 'date',
+                }}
+              />
+            </LocalizationProvider>
+
+            <FormControl
+              fullWidth
+              margin={'normal'}
+            >
+              <Autocomplete
+                required
+                handleChange={(account: string) => this.props.setTransaction({
+                  ...transaction,
+                  fromAccount: account,
+                })}
+                label={transaction.type === TransactionType.TRANSFER ? 'From Account' : 'Account'}
+                placeholder={'Select an account'}
+                suggestions={this.props.accounts}
+                value={transaction.fromAccount}
+              />
+            </FormControl>
+
+            {transaction.type === TransactionType.TRANSFER &&
+              <FormControl
+                fullWidth
+                margin={'normal'}
+              >
+                <Autocomplete
+                  required
+                  handleChange={(account: string) => this.props.setTransaction({
+                    ...transaction,
+                    toAccount: account,
+                  })}
+                  label={'To Account'}
+                  placeholder={'Select an account'}
+                  suggestions={this.props.accounts}
+                  value={transaction.toAccount}
+                />
+              </FormControl>}
+
+            <FormControl
+              fullWidth
+              margin={'normal'}
+            >
+              <Autocomplete
+                handleChange={(account: string | undefined) => this.props.setTransaction({
+                  ...transaction,
+                  cashbackAccount: account,
+                })}
+                label={'Cashback Account'}
+                placeholder={'Select an account'}
+                suggestions={this.props.accounts}
+                value={transaction.cashbackAccount}
+              />
+            </FormControl>
+
+            {transaction.cashbackAccount &&
+              <FormControl
+                fullWidth
+                margin={'normal'}
+              >
+                <InputLabel
+                  htmlFor="cashbackAmount"
+                  required
+                >
+                  Cashback Amount
+            </InputLabel>
+                <Input
+                  id="cashbackAmount"
+                  autoFocus={!transaction.hasOwnProperty('id')}
+                  name="cashbackAmount"
+                  value={transaction.cashbackAmount || ''}
+                  onChange={this.handleInputChange}
+                  type="number"
+                  inputProps={{
+                    step: 0.01,
+                    min: 0,
+                  }}
+                  required
+                  onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (['-', '+', 'e'].indexOf(event.key) !== -1) {
+                      // also fixes https://material-ui.com/components/text-fields/#shrink
+                      event.preventDefault();
+                    }
+                  }}
+                />
+              </FormControl>}
+          </form>
+        </Container>
       </Dialog>
     );
   }

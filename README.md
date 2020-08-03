@@ -41,6 +41,10 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
 - [ ] One transaction can be done from multiple accounts (for example, paying for groceries and using some bonuses to cover part of the expense)
 - [ ] Add dark theme
 - [ ] Add lending/borrowing features
+  - [ ] Let user link returned money transaction to loaned money transaction. Same for reimbursements.
+  This is required to correctly check that all reimbursable payments were actually reimbursed.
+  Current approach: add reimbursable expenses to reimbursable income and verify that it's zero.
+  But this is not always the case (currency exchange rate changed, or I was reimbursed more than expected).
 ---
 
 💰Expenses is a 

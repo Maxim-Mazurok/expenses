@@ -3,7 +3,7 @@
 - [ ] Better categories:
   - [x] Added icons and colors for "Tech", "Taxi" and "Education"
   - [ ] Add ability to set icons and colors from interface/google sheets
-  - [ ] Make categories transaction type specific
+  - [ ] Make categories transaction type specific (i.e., I only spend on Groceries (except cash-back) and I only receive income from Salary)
 - [ ] Multi-currency support (basic)
   - [x] If account name does not contain `(usd)` in the name, it's considered 
   to be UAH (₴) in interface
@@ -45,6 +45,7 @@ your own app at [console.cloud.google.com/apis](https://console.cloud.google.com
   This is required to correctly check that all reimbursable payments were actually reimbursed.
   Current approach: add reimbursable expenses to reimbursable income and verify that it's zero.
   But this is not always the case (currency exchange rate changed, or I was reimbursed more than expected).
+  Maybe, not only link them, but also have checkbox to manually resolve them.
 ---
 
 💰Expenses is a 
